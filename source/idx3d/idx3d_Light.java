@@ -94,10 +94,14 @@ public class idx3d_Light extends idx3d_CoreObject
 
 	// P U B L I C   M E T H O D S
 
-		public void project(idx3d_Matrix m)
-		{
-			matrix2=matrix.getClone();
-			matrix2.transform(m);
-			v2=v.transform(matrix2);
-		}
+    public void project(idx3d_Matrix m) {        
+        // matrix2=matrix.getClone();
+        // v2=v.transform(matrix2);
+        if (matrix2 == null) 
+            matrix2 = new idx3d_Matrix();
+       
+        matrix.copyTo(matrix2);
+        matrix2.transform(m);        
+        v.transform(matrix2, v2);
+    }
 }

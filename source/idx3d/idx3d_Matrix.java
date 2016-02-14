@@ -116,48 +116,59 @@ public class idx3d_Matrix
 		{
 			return idx3d_Matrix.scaleMatrix(d,d,d);
 		}
-
+    
+    private static idx3d_Matrix tempM = new idx3d_Matrix();    
+    private static idx3d_Matrix tempOUT = new idx3d_Matrix();
+    
 		public static idx3d_Matrix rotateMatrix(float dx, float dy, float dz)
 		// matrix for rotation
 		{
-			idx3d_Matrix out=new idx3d_Matrix();
+			//idx3d_Matrix out=new idx3d_Matrix();
+                        tempOUT.reset();
 			float SIN;
 			float COS;
 
 			if (dx!=0)
 			{
-				idx3d_Matrix m =new idx3d_Matrix();
+				//idx3d_Matrix m =new idx3d_Matrix();
 				SIN=idx3d_Math.sin(dx);
 				COS=idx3d_Math.cos(dx);
-				m.m11=COS;
-				m.m12=SIN;
-				m.m21=-SIN;
-				m.m22=COS;
-				out.transform(m);
+				
+                                tempM.reset();
+				tempM.m11=COS;
+				tempM.m12=SIN;
+				tempM.m21=-SIN;
+				tempM.m22=COS;
+				tempOUT.transform(tempM);        
 			}
 			if (dy!=0)
 			{
-				idx3d_Matrix m =new idx3d_Matrix();
+				//idx3d_Matrix m = new idx3d_Matrix();
 				SIN=idx3d_Math.sin(dy);
 				COS=idx3d_Math.cos(dy);
-				m.m00=COS;
-				m.m02=SIN;
-				m.m20=-SIN;
-				m.m22=COS;
-				out.transform(m);
+        
+                                tempM.reset();
+				tempM.m00=COS;
+				tempM.m02=SIN;
+				tempM.m20=-SIN;
+				tempM.m22=COS;
+				tempOUT.transform(tempM);
 			}
 			if (dz!=0)
 			{
-				idx3d_Matrix m =new idx3d_Matrix();
+				//idx3d_Matrix m =new idx3d_Matrix();
+        
 				SIN=idx3d_Math.sin(dz);
 				COS=idx3d_Math.cos(dz);
-				m.m00=COS;
-				m.m01=SIN;
-				m.m10=-SIN;
-				m.m11=COS;
-				out.transform(m);
+        
+                                tempM.reset();
+				tempM.m00=COS;
+				tempM.m01=SIN;
+				tempM.m10=-SIN;
+				tempM.m11=COS;
+				tempOUT.transform(tempM);
 			}
-			return out;
+			return tempOUT;
 		}
 
 
@@ -201,122 +212,222 @@ public class idx3d_Matrix
 		public void transform(idx3d_Matrix n)
 		// transforms this matrix by matrix n from left (this=n x this)
 		{
-			idx3d_Matrix m=this.getClone();
-
-			m00 = n.m00*m.m00 + n.m01*m.m10 + n.m02*m.m20;
-			m01 = n.m00*m.m01 + n.m01*m.m11 + n.m02*m.m21;
-			m02 = n.m00*m.m02 + n.m01*m.m12 + n.m02*m.m22;
-			m03 = n.m00*m.m03 + n.m01*m.m13 + n.m02*m.m23 + n.m03;
-			m10 = n.m10*m.m00 + n.m11*m.m10 + n.m12*m.m20;
-			m11 = n.m10*m.m01 + n.m11*m.m11 + n.m12*m.m21;
-			m12 = n.m10*m.m02 + n.m11*m.m12 + n.m12*m.m22;
-			m13 = n.m10*m.m03 + n.m11*m.m13 + n.m12*m.m23 + n.m13;
-			m20 = n.m20*m.m00 + n.m21*m.m10 + n.m22*m.m20;
-			m21 = n.m20*m.m01 + n.m21*m.m11 + n.m22*m.m21;
-			m22 = n.m20*m.m02 + n.m21*m.m12 + n.m22*m.m22;
-			m23 = n.m20*m.m03 + n.m21*m.m13 + n.m22*m.m23 + n.m23;			
-		}
-		
-		public void preTransform(idx3d_Matrix n)
-		// transforms this matrix by matrix n from right (this=this x n)
-		{
-			idx3d_Matrix m=this.getClone();
-
-			m00 = m.m00*n.m00 + m.m01*n.m10 + m.m02*n.m20;
-			m01 = m.m00*n.m01 + m.m01*n.m11 + m.m02*n.m21;
-			m02 = m.m00*n.m02 + m.m01*n.m12 + m.m02*n.m22;
-			m03 = m.m00*n.m03 + m.m01*n.m13 + m.m02*n.m23 + m.m03;
-			m10 = m.m10*n.m00 + m.m11*n.m10 + m.m12*n.m20;
-			m11 = m.m10*n.m01 + m.m11*n.m11 + m.m12*n.m21;
-			m12 = m.m10*n.m02 + m.m11*n.m12 + m.m12*n.m22;
-			m13 = m.m10*n.m03 + m.m11*n.m13 + m.m12*n.m23 + m.m13;
-			m20 = m.m20*n.m00 + m.m21*n.m10 + m.m22*n.m20;
-			m21 = m.m20*n.m01 + m.m21*n.m11 + m.m22*n.m21;
-			m22 = m.m20*n.m02 + m.m21*n.m12 + m.m22*n.m22;
-			m23 = m.m20*n.m03 + m.m21*n.m13 + m.m22*n.m23 + m.m23;			
+			//idx3d_Matrix m=this.getClone();
+                 idx3d_Matrix m = this;
+      
+		float	mm00 = n.m00*m.m00 + n.m01*m.m10 + n.m02*m.m20;
+		float	mm01 = n.m00*m.m01 + n.m01*m.m11 + n.m02*m.m21;
+		float	mm02 = n.m00*m.m02 + n.m01*m.m12 + n.m02*m.m22;
+		float	mm03 = n.m00*m.m03 + n.m01*m.m13 + n.m02*m.m23 + n.m03;
+		float	mm10 = n.m10*m.m00 + n.m11*m.m10 + n.m12*m.m20;
+		float	mm11 = n.m10*m.m01 + n.m11*m.m11 + n.m12*m.m21;
+		float	mm12 = n.m10*m.m02 + n.m11*m.m12 + n.m12*m.m22;
+		float	mm13 = n.m10*m.m03 + n.m11*m.m13 + n.m12*m.m23 + n.m13;
+		float	mm20 = n.m20*m.m00 + n.m21*m.m10 + n.m22*m.m20;
+		float	mm21 = n.m20*m.m01 + n.m21*m.m11 + n.m22*m.m21;
+		float	mm22 = n.m20*m.m02 + n.m21*m.m12 + n.m22*m.m22;
+		float	mm23 = n.m20*m.m03 + n.m21*m.m13 + n.m22*m.m23 + n.m23;	
+      
+                m.m00 = mm00;       m.m01 = mm01;     m.m02 = mm02;    m.m03 = mm03;
+                m.m10 = mm10;       m.m11 = mm11;     m.m12 = mm12;    m.m13 = mm13;
+                m.m20 = mm20;       m.m21 = mm21;     m.m22 = mm22;    m.m23 = mm23;
+      
 		}
 
-		public static idx3d_Matrix multiply(idx3d_Matrix m1, idx3d_Matrix m2)
+   /**
+    *  transforms this matrix by matrix n from right (this=this x n)
+    */
+   public void preTransform(idx3d_Matrix n){
+	//idx3d_Matrix m = this.getClone();
+        idx3d_Matrix m = this;
+		float	mm00 = m.m00*n.m00 + m.m01*n.m10 + m.m02*n.m20;
+		float	mm01 = m.m00*n.m01 + m.m01*n.m11 + m.m02*n.m21;
+		float	mm02 = m.m00*n.m02 + m.m01*n.m12 + m.m02*n.m22;
+		float	mm03 = m.m00*n.m03 + m.m01*n.m13 + m.m02*n.m23 + m.m03;
+		float	mm10 = m.m10*n.m00 + m.m11*n.m10 + m.m12*n.m20;
+		float	mm11 = m.m10*n.m01 + m.m11*n.m11 + m.m12*n.m21;
+		float	mm12 = m.m10*n.m02 + m.m11*n.m12 + m.m12*n.m22;
+		float	mm13 = m.m10*n.m03 + m.m11*n.m13 + m.m12*n.m23 + m.m13;
+		float	mm20 = m.m20*n.m00 + m.m21*n.m10 + m.m22*n.m20;
+		float	mm21 = m.m20*n.m01 + m.m21*n.m11 + m.m22*n.m21;
+		float	mm22 = m.m20*n.m02 + m.m21*n.m12 + m.m22*n.m22;
+		float	mm23 = m.m20*n.m03 + m.m21*n.m13 + m.m22*n.m23 + m.m23;	
+          
+      m.m00 = mm00;       m.m01 = mm01;     m.m02 = mm02;    m.m03 = mm03;
+      m.m10 = mm10;       m.m11 = mm11;     m.m12 = mm12;    m.m13 = mm13;
+      m.m20 = mm20;       m.m21 = mm21;     m.m22 = mm22;    m.m23 = mm23;
+      
+     }
+
+   /**
+    * Multiply m1 by m2 and return result in m.<br>
+    *  m = m1 x m2
+    * @param mLeft - first matrix
+    * @param mRight - second matriz
+    * @param dst -  resulting matriz
+    */
+   public static void multiply(idx3d_Matrix mLeft, 
+                               idx3d_Matrix mRight,
+                               idx3d_Matrix dst ) {
+     
+	//idx3d_Matrix m=new idx3d_Matrix();
+
+	dst.m00 = mLeft.m00*mRight.m00 + mLeft.m01*mRight.m10 + mLeft.m02*mRight.m20;
+	dst.m01 = mLeft.m00*mRight.m01 + mLeft.m01*mRight.m11 + mLeft.m02*mRight.m21;
+	dst.m02 = mLeft.m00*mRight.m02 + mLeft.m01*mRight.m12 + mLeft.m02*mRight.m22;
+	dst.m03 = mLeft.m00*mRight.m03 + mLeft.m01*mRight.m13 + mLeft.m02*mRight.m23 + mLeft.m03;
+	dst.m10 = mLeft.m10*mRight.m00 + mLeft.m11*mRight.m10 + mLeft.m12*mRight.m20;
+	dst.m11 = mLeft.m10*mRight.m01 + mLeft.m11*mRight.m11 + mLeft.m12*mRight.m21;
+	dst.m12 = mLeft.m10*mRight.m02 + mLeft.m11*mRight.m12 + mLeft.m12*mRight.m22;
+	dst.m13 = mLeft.m10*mRight.m03 + mLeft.m11*mRight.m13 + mLeft.m12*mRight.m23 + mLeft.m13;
+	dst.m20 = mLeft.m20*mRight.m00 + mLeft.m21*mRight.m10 + mLeft.m22*mRight.m20;
+	dst.m21 = mLeft.m20*mRight.m01 + mLeft.m21*mRight.m11 + mLeft.m22*mRight.m21;
+	dst.m22 = mLeft.m20*mRight.m02 + mLeft.m21*mRight.m12 + mLeft.m22*mRight.m22;
+	dst.m23 = mLeft.m20*mRight.m03 + mLeft.m21*mRight.m13 + mLeft.m22*mRight.m23 + mLeft.m23;
+	//return m;
+  }
+    
+  /**
+   *  
+   *  returns m1 x m2<br>
+   *  @deprecated - use {@link #multiply(idx3d_Matrix, idx3d_Matrix, idx3d_Matrix)} instead.  
+   */
+   @Deprecated
+  public static idx3d_Matrix multiply(idx3d_Matrix m1, idx3d_Matrix m2)
 		// returns m1 x m2
-		{
-			idx3d_Matrix m=new idx3d_Matrix();
+   {
+	idx3d_Matrix m=new idx3d_Matrix();
+ 	m.m00 = m1.m00*m2.m00 + m1.m01*m2.m10 + m1.m02*m2.m20;
+	m.m01 = m1.m00*m2.m01 + m1.m01*m2.m11 + m1.m02*m2.m21;
+	m.m02 = m1.m00*m2.m02 + m1.m01*m2.m12 + m1.m02*m2.m22;
+	m.m03 = m1.m00*m2.m03 + m1.m01*m2.m13 + m1.m02*m2.m23 + m1.m03;
+	m.m10 = m1.m10*m2.m00 + m1.m11*m2.m10 + m1.m12*m2.m20;
+	m.m11 = m1.m10*m2.m01 + m1.m11*m2.m11 + m1.m12*m2.m21;
+	m.m12 = m1.m10*m2.m02 + m1.m11*m2.m12 + m1.m12*m2.m22;
+	m.m13 = m1.m10*m2.m03 + m1.m11*m2.m13 + m1.m12*m2.m23 + m1.m13;
+	m.m20 = m1.m20*m2.m00 + m1.m21*m2.m10 + m1.m22*m2.m20;
+	m.m21 = m1.m20*m2.m01 + m1.m21*m2.m11 + m1.m22*m2.m21;
+	m.m22 = m1.m20*m2.m02 + m1.m21*m2.m12 + m1.m22*m2.m22;
+	m.m23 = m1.m20*m2.m03 + m1.m21*m2.m13 + m1.m22*m2.m23 + m1.m23;
+	return m;
+  }
 
-			m.m00 = m1.m00*m2.m00 + m1.m01*m2.m10 + m1.m02*m2.m20;
-			m.m01 = m1.m00*m2.m01 + m1.m01*m2.m11 + m1.m02*m2.m21;
-			m.m02 = m1.m00*m2.m02 + m1.m01*m2.m12 + m1.m02*m2.m22;
-			m.m03 = m1.m00*m2.m03 + m1.m01*m2.m13 + m1.m02*m2.m23 + m1.m03;
-			m.m10 = m1.m10*m2.m00 + m1.m11*m2.m10 + m1.m12*m2.m20;
-			m.m11 = m1.m10*m2.m01 + m1.m11*m2.m11 + m1.m12*m2.m21;
-			m.m12 = m1.m10*m2.m02 + m1.m11*m2.m12 + m1.m12*m2.m22;
-			m.m13 = m1.m10*m2.m03 + m1.m11*m2.m13 + m1.m12*m2.m23 + m1.m13;
-			m.m20 = m1.m20*m2.m00 + m1.m21*m2.m10 + m1.m22*m2.m20;
-			m.m21 = m1.m20*m2.m01 + m1.m21*m2.m11 + m1.m22*m2.m21;
-			m.m22 = m1.m20*m2.m02 + m1.m21*m2.m12 + m1.m22*m2.m22;
-			m.m23 = m1.m20*m2.m03 + m1.m21*m2.m13 + m1.m22*m2.m23 + m1.m23;
-			return m;
-		}
-		
-		public String toString()
-		{
-			StringBuffer out=new StringBuffer("<Matrix: \r\n");
-			out.append(m00+","+m01+","+m02+","+m03+",\r\n");
-			out.append(m10+","+m11+","+m12+","+m13+",\r\n");
-			out.append(m20+","+m21+","+m22+","+m23+",\r\n");
-			out.append(m30+","+m31+","+m32+","+m33+">\r\n");
-			return out.toString();
-		}
+    /**
+     * Mutiply this by m2. <br>
+     * 
+     * this = this x m2
+     *  
+     * @param m2
+     * @return
+     */
+    public idx3d_Matrix multiply (idx3d_Matrix m2)
+    {
+     idx3d_Matrix m1 = this;
+      float mm00 = m1.m00*m2.m00 + m1.m01*m2.m10 + m1.m02*m2.m20;
+      float mm01 = m1.m00*m2.m01 + m1.m01*m2.m11 + m1.m02*m2.m21;
+      float mm02 = m1.m00*m2.m02 + m1.m01*m2.m12 + m1.m02*m2.m22;
+      float mm03 = m1.m00*m2.m03 + m1.m01*m2.m13 + m1.m02*m2.m23 + m1.m03;
+      float mm10 = m1.m10*m2.m00 + m1.m11*m2.m10 + m1.m12*m2.m20;
+      float mm11 = m1.m10*m2.m01 + m1.m11*m2.m11 + m1.m12*m2.m21;
+      float mm12 = m1.m10*m2.m02 + m1.m11*m2.m12 + m1.m12*m2.m22;
+      float mm13 = m1.m10*m2.m03 + m1.m11*m2.m13 + m1.m12*m2.m23 + m1.m13;
+      float mm20 = m1.m20*m2.m00 + m1.m21*m2.m10 + m1.m22*m2.m20;
+      float mm21 = m1.m20*m2.m01 + m1.m21*m2.m11 + m1.m22*m2.m21;
+      float mm22 = m1.m20*m2.m02 + m1.m21*m2.m12 + m1.m22*m2.m22;
+      float mm23 = m1.m20*m2.m03 + m1.m21*m2.m13 + m1.m22*m2.m23 + m1.m23;
+      
+      m1.m00 = mm00;       m1.m01 = mm01;     m1.m02 = mm02;    m1.m03 = mm03;
+      m1.m10 = mm10;       m1.m11 = mm11;     m1.m12 = mm12;    m1.m13 = mm13;
+      m1.m20 = mm20;       m1.m21 = mm21;     m1.m22 = mm22;    m1.m23 = mm23;
+      
+      return m1;
+    }
+    
+    public String toString() {
+        StringBuffer out = new StringBuffer("<Matrix: \r\n");
+        out.append(m00 + "," + m01 + "," + m02 + "," + m03 + ",\r\n");
+        out.append(m10 + "," + m11 + "," + m12 + "," + m13 + ",\r\n");
+        out.append(m20 + "," + m21 + "," + m22 + "," + m23 + ",\r\n");
+        out.append(m30 + "," + m31 + "," + m32 + "," + m33 + ">\r\n");
+        return out.toString();
+    }
 
-		public idx3d_Matrix getClone()
-		{
-			idx3d_Matrix m=new idx3d_Matrix();
-			m.m00=m00;  m.m01=m01;  m.m02=m02;  m.m03=m03;
-			m.m10=m10;  m.m11=m11;  m.m12=m12;  m.m13=m13;
-			m.m20=m20;  m.m21=m21;  m.m22=m22;  m.m23=m23;
-			m.m30=m30;  m.m31=m31;  m.m32=m32;  m.m33=m33;
-			return m;
-		}
+    public idx3d_Matrix getClone() {
+        idx3d_Matrix m = new idx3d_Matrix();
+        m.m00 = m00;        m.m01 = m01;        m.m02 = m02;        m.m03 = m03;
+        m.m10 = m10;        m.m11 = m11;        m.m12 = m12;        m.m13 = m13;
+        m.m20 = m20;        m.m21 = m21;        m.m22 = m22;        m.m23 = m23;
+        m.m30 = m30;        m.m31 = m31;        m.m32 = m32;        m.m33 = m33;
+        return m;
+    }
+    
+    /**
+   * memory wise copy. Better than cloning 
+   * @param dest - matriz to copy to.
+   * @return the copied matrix, it is, dest matrix itself.
+   */
+    public idx3d_Matrix copyTo(idx3d_Matrix dest){			
+         if (dest == null) return getClone();
+	  dest.m00=m00;  dest.m01=m01;  dest.m02=m02;  dest.m03=m03;
+	  dest.m10=m10;  dest.m11=m11;  dest.m12=m12;  dest.m13=m13;
+	  dest.m20=m20;  dest.m21=m21;  dest.m22=m22;  dest.m23=m23;
+	  dest.m30=m30;  dest.m31=m31;  dest.m32=m32;  dest.m33=m33;
+	  return dest;
+     }
+    
+   /**
+   * Get a copy  of this matrix but inverse.
+   * @return a new inverted matrix from   
+   */
+    public idx3d_Matrix inverse()
+    {
+     idx3d_Matrix m = new idx3d_Matrix();
+     return inverse(m);      
+    }
 		
-		public idx3d_Matrix inverse()
-		// Returns the inverse of this matrix
-		// Code generated with MapleV and handoptimized
-		{
-			idx3d_Matrix m=new idx3d_Matrix();
+   /**
+   * Returns the inverse of this matrix
+   * @param dest - destination
+   * @return dest, with contents os inverse of this 
+   */
+    public idx3d_Matrix inverse(idx3d_Matrix dest) {
 			
-			float q1 = m12;  float q6 = m10*m01;  float q7 = m10*m21;  float q8 = m02;  
-			float q13 = m20*m01;  float q14 = m20*m11;  float q21 = m02*m21;  float q22 = m03*m21;  
-			float q25 = m01*m12;  float q26 = m01*m13;  float q27 = m02*m11;  float q28 = m03*m11;  
-			float q29 = m10*m22;  float q30 = m10*m23;  float q31 = m20*m12;  float q32 = m20*m13;  
-			float q35 = m00*m22;  float q36 = m00*m23;  float q37 = m20*m02;  float q38 = m20*m03;  
-			float q41 = m00*m12;  float q42 = m00*m13;  float q43 = m10*m02;  float q44 = m10*m03;  
-			float q45 = m00*m11;  float q48 = m00*m21;  
-			float q49 = q45*m22-q48*q1-q6*m22+q7*q8;
-			float q50 = q13*q1-q14*q8;
-			float q51 = 1/(q49+q50);
+	float q1 = m12;  float q6 = m10*m01;  float q7 = m10*m21;  float q8 = m02;  
+	float q13 = m20*m01;  float q14 = m20*m11;  float q21 = m02*m21;  float q22 = m03*m21; 
+	float q25 = m01*m12;  float q26 = m01*m13;  float q27 = m02*m11;  float q28 = m03*m11;
+	float q29 = m10*m22;  float q30 = m10*m23;  float q31 = m20*m12;  float q32 = m20*m13;
+	float q35 = m00*m22;  float q36 = m00*m23;  float q37 = m20*m02;  float q38 = m20*m03;
+	float q41 = m00*m12;  float q42 = m00*m13;  float q43 = m10*m02;  float q44 = m10*m03;
+	float q45 = m00*m11;  float q48 = m00*m21;
+	float q49 = q45*m22-q48*q1-q6*m22+q7*q8;
+	float q50 = q13*q1-q14*q8;
+	float q51 = 1/(q49+q50);
 				
-			m.m00 = (m11*m22*m33-m11*m23*m32-m21*m12*m33+m21*m13*m32+m31*m12*m23-m31*m13*m22)*q51;
-			m.m01 = -(m01*m22*m33-m01*m23*m32-q21*m33+q22*m32)*q51;
-			m.m02 = (q25*m33-q26*m32-q27*m33+q28*m32)*q51;
-			m.m03 = -(q25*m23-q26*m22-q27*m23+q28*m22+q21*m13-q22*m12)*q51;
-			m.m10 = -(q29*m33-q30*m32-q31*m33+q32*m32)*q51;
-			m.m11 = (q35*m33-q36*m32-q37*m33+q38*m32)*q51;
-			m.m12 = -(q41*m33-q42*m32-q43*m33+q44*m32)*q51;
-			m.m13 = (q41*m23-q42*m22-q43*m23+q44*m22+q37*m13-q38*m12)*q51;
-			m.m20 = (q7*m33-q30*m31-q14*m33+q32*m31)*q51;
-			m.m21 = -(q48*m33-q36*m31-q13*m33+q38*m31)*q51;
-			m.m22 = (q45*m33-q42*m31-q6*m33+q44*m31)*q51;
-			m.m23 = -(q45*m23-q42*m21-q6*m23+q44*m21+q13*m13-q38*m11)*q51;
+	dest.m00 = (m11*m22*m33-m11*m23*m32-m21*m12*m33+m21*m13*m32+m31*m12*m23-m31*m13*m22)*q51;
+	dest.m01 = -(m01*m22*m33-m01*m23*m32-q21*m33+q22*m32)*q51;
+	dest.m02 = (q25*m33-q26*m32-q27*m33+q28*m32)*q51;
+	dest.m03 = -(q25*m23-q26*m22-q27*m23+q28*m22+q21*m13-q22*m12)*q51;
+	dest.m10 = -(q29*m33-q30*m32-q31*m33+q32*m32)*q51;
+	dest.m11 = (q35*m33-q36*m32-q37*m33+q38*m32)*q51;
+	dest.m12 = -(q41*m33-q42*m32-q43*m33+q44*m32)*q51;
+	dest.m13 = (q41*m23-q42*m22-q43*m23+q44*m22+q37*m13-q38*m12)*q51;
+	dest.m20 = (q7*m33-q30*m31-q14*m33+q32*m31)*q51;
+	dest.m21 = -(q48*m33-q36*m31-q13*m33+q38*m31)*q51;
+	dest.m22 = (q45*m33-q42*m31-q6*m33+q44*m31)*q51;
+	dest.m23 = -(q45*m23-q42*m21-q6*m23+q44*m21+q13*m13-q38*m11)*q51;
 	
-			return m;
-		}
+	return dest;
+	}
 		
-		public void reset()
-		// Resets the matrix
-		{
-			m00=1; m01=0; m02=0; m03=0;
-			m10=0; m11=1; m12=0; m13=0;
-			m20=0; m21=0; m22=1; m23=0;
-			m30=0; m31=0; m32=0; m33=1;
-		}
+    /**
+     * Reset this matrix
+     */
+    public void reset()	{
+        m00=1; m01=0; m02=0; m03=0;
+        m10=0; m11=1; m12=0; m13=0;
+        m20=0; m21=0; m22=1; m23=0;
+        m30=0; m31=0; m32=0; m33=1;
+       }
 		
 		
 	// P R I V A T E   M E T H O D S

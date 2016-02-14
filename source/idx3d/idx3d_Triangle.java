@@ -36,7 +36,12 @@
 
 package idx3d;
 
-public class idx3d_Triangle
+/**
+ * Hold Triangle data
+ * @author Livia
+ */
+public class idx3d_Triangle 
+  implements Comparable<idx3d_Triangle>
 // defines a 3d triangle
 {
 	// F I E L D S
@@ -49,8 +54,8 @@ public class idx3d_Triangle
 		public idx3d_Vertex p2;  // second vertex 
 		public idx3d_Vertex p3;  // third  vertex 
 
-		public idx3d_Vector n;  // Normal vector of flat triangle
-		public idx3d_Vector n2; // Projected Normal vector
+		public idx3d_Vector n = new idx3d_Vector() ;  // Normal vector of flat triangle
+		public idx3d_Vector n2 = new idx3d_Vector(); // Projected Normal vector
 
 		private int minx,maxx,miny,maxy; // for clipping
 		private idx3d_Vector triangleCenter=new idx3d_Vector();
@@ -88,7 +93,8 @@ public class idx3d_Triangle
 
 		public void project(idx3d_Matrix normalProjection)
 		{
-			n2=n.transform(normalProjection);
+			//n2=n.transform(normalProjection);
+			n.transform(normalProjection,n2);
 			dist=getDist();
 		}
 		
@@ -139,6 +145,15 @@ public class idx3d_Triangle
 
 
 	// P R I V A T E   M E T H O D S
+
+    @Override
+    public int compareTo(idx3d_Triangle o) {
+       if(this.dist < o.dist) return -1;
+       if(this.dist > o.dist) return  1;
+       else 
+           return 0;
+      // return  (int)((this.dist - o.dist)*1000f);
+    }
 
 
 }

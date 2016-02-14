@@ -46,6 +46,8 @@ public class idx3d_Vector
 		public float z=0;      //Cartesian (default),Cylindric
 		public float r=0;      //Cylindric
 		public float theta=0;  //Cylindric
+        
+        private static final float MIN_LENGTH = 1E-8f;
 
 
 	// C O N S T R U C T O R S
@@ -67,7 +69,7 @@ public class idx3d_Vector
 		// Normalizes the vector
 		{
 			float dist=length();
-			if (dist==0) return this;
+			if (dist < MIN_LENGTH) return this;
 			float invdist=1/dist;
 			x*=invdist;
 			y*=invdist;
@@ -84,20 +86,35 @@ public class idx3d_Vector
 			return this;
 		}
 		
-		public float length()
+		public final float length()
 		// Lenght of this vector
 		{	
-			return (float)Math.sqrt(x*x+y*y+z*z);
+     float v = x*x+y*y+z*z;
+         if (v < MIN_LENGTH) return 0.0f;
+    // System.out.println("Length " + v);
+         return (float)Math.sqrt(v);
+     
 		}
 
-		public idx3d_Vector transform(idx3d_Matrix m)
-		// Modifies the vector by matrix m 
-		{
-			float newx = x*m.m00 + y*m.m01 + z*m.m02+ m.m03;
-			float newy = x*m.m10 + y*m.m11 + z*m.m12+ m.m13;
-			float newz = x*m.m20 + y*m.m21 + z*m.m22+ m.m23;
-			return new idx3d_Vector(newx,newy,newz);
-		}
+    public idx3d_Vector transform(idx3d_Matrix m)
+    // Modifies the vector by matrix m
+    {
+        float newx = x * m.m00 + y * m.m01 + z * m.m02 + m.m03;
+        float newy = x * m.m10 + y * m.m11 + z * m.m12 + m.m13;
+        float newz = x * m.m20 + y * m.m21 + z * m.m22 + m.m23;
+        return new idx3d_Vector(newx, newy, newz);
+    }
+
+    public void transform(idx3d_Matrix m, idx3d_Vector vec)
+    // Modifies the vector by matrix m
+    {
+        float dx = x * m.m00 + y * m.m01 + z * m.m02 + m.m03;
+        float dy = x * m.m10 + y * m.m11 + z * m.m12 + m.m13;
+        float dz = x * m.m20 + y * m.m21 + z * m.m22 + m.m23;
+        vec.x = dx;
+        vec.y = dy;
+        vec.z = dz;
+    }
 
 		public void buildCylindric()
 		// Builds the cylindric coordinates out of the given cartesian coordinates
@@ -184,5 +201,68 @@ public class idx3d_Vector
 		{
 			return new idx3d_Vector(x,y,z);
 		}
+    
+    /**
+   * Fast SQRT using Taylor
+   * author Alex W. Rogoyski. Email: <rogoyski@cats.ucsc.edu>
+   * Java port: Alessandro Borges
+   * @param dUserVal 
+   */
+    private static final float iFact1 =(1f/2.0f),
+                              iFact2 = (1f/4f)/(1f*2f),
+                              iFact3 = (3f/8.0f) /(1f*2f*3f),
+                              iFact4 = (15f/16.0f)/(1f*2f*3f*4f); 
+
+    @Deprecated
+    private static final float fastSQRT(float dUserVal)
+    {
+     
+           /* reduce value */
+         /* here we are dividing the user value by
+            k * k until it's less than two and then
+            we will multiply the taylor series
+            value by some fixup amount k to the nth
+            power where n is the number times in
+            the loop */
+         float  dFixup = 1.0f;
+         float dKReduce = 2.0f;
+         while(dUserVal > 2f)
+         {
+            // dUserVal /= dKReduce * dKReduce;
+             dUserVal *= 0.25f;
+             dFixup *= dKReduce;
+         }
+
+         /* compute taylor series value */
+
+       float  x = dUserVal; /* switch to x because dUserVal is
+                          too long */
+        /*
+         iFact1 = 1;
+         iFact2 = 1*2;
+         iFact3 = 1*2*3;
+         iFact4 = 1*2*3*4;
+
+         float  dTaylorVal =
+             1.0
+             +  (1/2.0)  * (x-1) / iFact1
+             -  (1/4.0)  * (x-1) * (x-1) / iFact2
+             +  (3/8.0)  * (x-1) * (x-1) * (x-1) / iFact3
+             - (15/16.0) * (x-1) * (x-1) * (x-1) * (x-1) / iFact4;
+      */
+      float x1 = x - 1.0f;
+      float x2 = x1*x1;
+      float  dTaylorVal =             
+             1.0f
+             +  x1 * iFact1
+             -  x2 * iFact2
+             +  x2*x1 * iFact3
+             -  x2*x2* iFact4;
+         /* do the fixup to correct the reduction */
+         dTaylorVal *= dFixup;
+         
+         return dTaylorVal;
+   
+    }
 
 }

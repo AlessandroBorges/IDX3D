@@ -37,7 +37,9 @@
 package idx3d;
 
 import java.util.Vector;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 
 public class idx3d_Vertex
 // defines a triangle vertex
@@ -47,9 +49,9 @@ public class idx3d_Vertex
 		public idx3d_Object parent;
 		
 		public idx3d_Vector pos=new idx3d_Vector();   //(x,y,z) Coordinate of vertex
-		public idx3d_Vector pos2;  //Transformed vertex coordinate
+		public idx3d_Vector pos2 = new idx3d_Vector();  //Transformed vertex coordinate
 		public idx3d_Vector n=new idx3d_Vector();   //Normal Vector at vertex
-		public idx3d_Vector n2;  //Transformed normal vector (camera space)
+		public idx3d_Vector n2 = new idx3d_Vector();  //Transformed normal vector (camera space)
 
 		public int x;  //Projected x coordinate
 		public int y;  //Projected y coordinate
@@ -69,7 +71,7 @@ public class idx3d_Vertex
 		public int id; // Vertex index
 		
 		private float fact;
-		private Vector neighbor=new Vector(); //Neighbor triangles of vertex
+		private List<idx3d_Triangle> neighbor=new ArrayList<idx3d_Triangle>(); //Neighbor triangles of vertex
 
 
 	// C O N S T R U C T O R S
@@ -109,8 +111,11 @@ public class idx3d_Vertex
 		// Projects this vertex into camera space
 		{
 			
-			pos2=pos.transform(vertexProjection);
-			n2=n.transform(normalProjection);
+			//pos2=pos.transform(vertexProjection);
+			//n2=n.transform(normalProjection);
+
+			pos.transform(vertexProjection,pos2);
+			n.transform(normalProjection,n2);
 
 			fact=camera.screenscale/camera.fovfact/((pos2.z>0.1)?pos2.z:0.1f);
 			x=(int)(pos2.x*fact+(camera.screenwidth>>1));
@@ -145,13 +150,13 @@ public class idx3d_Vertex
 		void registerNeighbor(idx3d_Triangle triangle)
 		// registers a neighbor triangle
 		{
-			if (!neighbor.contains(triangle)) neighbor.addElement(triangle);
+			if (!neighbor.contains(triangle)) neighbor.add(triangle);
 		}
 		
 		void resetNeighbors()
 		// resets the neighbors
 		{
-			neighbor.removeAllElements();
+			neighbor.clear();
 		}
 
 		public void regenerateNormal()
@@ -159,13 +164,13 @@ public class idx3d_Vertex
 		{
 			float nx=0;
 			float ny=0;
-			float nz=0;
-			Enumeration enum=neighbor.elements();
+			float nz=0;			
+			int sz = neighbor.size();
 			idx3d_Triangle tri;
 			idx3d_Vector wn;
-			while (enum.hasMoreElements())
+			for (int i=0; i<sz; i++)
 			{
-				tri=(idx3d_Triangle)enum.nextElement();
+				tri= neighbor.get(i);// enume.nextElement();
 				wn=tri.getWeightedNormal();
 				nx+=wn.x;
 				ny+=wn.y;
