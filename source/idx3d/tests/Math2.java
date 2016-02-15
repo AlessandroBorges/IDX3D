@@ -16,6 +16,12 @@ public class Math2 {
    /**
      * Look up table size.
      * MUST be power of 2.
+     * If you plan to use only the interpolated versions, sin2() and cos2(),
+     * You can reduce this to 64 ans still have nice precision when compared to 
+     * java.lang.Math.sin() and java.lang.Math.cos();
+     * 
+     * But for simple version of sin()/cos(), consider 
+     * increase SIZE to 512 or 1024.
      */
     private static final int SIZE = 256;
     
