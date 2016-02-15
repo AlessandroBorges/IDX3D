@@ -6,6 +6,7 @@ package idx3d.tests;
 import java.util.Arrays;
 
 /**
+ * Testing LUT table
  * @author Alessandro Borges
  *
  */
@@ -22,7 +23,7 @@ public class Math2 {
      * It results on smoother sin(x) transitions in range between [-MIN_ANGLE .. +MIN_ANGLE]  
      * Default value is 
      */
-    private static final float MIN_ANGLE = (float) (Math.toRadians(15f));
+    private static final float MIN_ANGLE = (float) (Math.toRadians(12f));
     
     static{
         buildLUT();
@@ -35,7 +36,11 @@ public class Math2 {
         }
     }
     
-
+    /**
+	* sin() using Look up table.
+	* @param rad - angle in radians
+	* @return sin of rad
+	*/
     public static final float sin(final float rad){  
              float ang = rad < 0 ? -rad : rad;   
           // low angles 
@@ -57,6 +62,11 @@ public class Math2 {
         return sin2(rad + PI_2); 
     }
     
+	/**
+	 * sin using interpolation. High precison
+	 * @param rad angle in radians
+	 * @return sin
+	 */
     public static final float sin2(final float rad){
         float ang = rad < 0 ? -rad : rad;
        // while(ang > 2 * PI) ang -= 2 * PI; // reduce angle to [0..2PI]            
@@ -81,7 +91,7 @@ public class Math2 {
         System.out.println("LUT size: " + SIZE);       
         System.out.println("Deg     \t  Rad \t      Math.sin(x)   \t Lut.Sin() \t Lut.Sin2()  \t  Dif");
     
-        float[] radians = random(SIZE,0, PI);
+        float[] radians = random(SIZE, Math.toRadians(0), Math.toRadians(45));
         for (int i=0; i<radians.length; i++){
             float angle = radians[i];// (float) (2*Math.PI * Math.random()); // i*STEP;
             float degree = (float)Math.toDegrees(angle);

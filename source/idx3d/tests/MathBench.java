@@ -5,44 +5,54 @@ package idx3d.tests;
 import java.util.Arrays;
 
 import idx3d.idx3d_Math;
-
+/**
+ * Testing sin/cos
+ * 
+ * @author Alessandro
+ *
+ */
 public class MathBench {
 
     ////////////////////////////////////////////////////////////////////////////
 
     private static float[] sample = null;
-    private static float[] result = null;
+  //  private static float[] result = null;
+    private static float sum = 0;
 
     public static void main(String[] args) {
        
         
-        int reps = 10000;
-        int sets = 100;
-        sample = random(reps,Math.toRadians(0), Math.toRadians(20));
-        result = sample(reps);
+        int size_arr = 10*1000*1000;
+        int sets = 10;
+        float min = (float) Math.toRadians(0);
+        float max = (float)Math.toRadians(45);
+        //create a float array with size_arr, with values between min and max
+        sample = random(size_arr,min, max);       
 
-        System.out.println("reps: " + reps);
-        System.out.println("  Trial  Math.sin()  idx3d.sin()  LUT90.sin()  Math.cos()");
+        System.out.println("Size test: " + size_arr);
+        System.out.println("Angles range: ["+ (float)Math.toDegrees(min) +"..."+ (float)Math.toDegrees(max) +"]");
+        System.out.println("Time in ms");
+        System.out.println("Trial java.lang.Math.sin() | Math2.sin() | LUT90.sin() | Math2.sin2() [interpolation]");
         for (int i = 0; i < sets; i++) {
-            System.out.printf("%4d \t %5.4f \t %5.4f \t %5.4f \t %5.4f\n", 
-                    i, testSinLib(reps), testSinTab(reps), testSinLut(reps), testCosLib(reps));
+            System.out.printf("%4d \t %5.4f \t     %5.4f \t    %5.4f \t %5.4f\n", 
+                    i, testSinLib(size_arr), testSinMath2(size_arr), testSinLut90(size_arr), testSin2Math2(size_arr));
         }
 
         boolean doPrecisionTest = true;
         if (doPrecisionTest) {
             System.out.println("Precision Test");
-            System.out.println("\n\nAngle \t JavaMath \t idxSin \t lutSin \t errIdx  \t errLut \t Lut_Win");
+            System.out.println("\n\nAngle \t java.Math \t Math2.sin2() \t LUT90.Sin() \t error.Sin2  \t error.LUT90 \t Lut Win Java.Math?");
             for (int i = 0; i < 361; i++) {
                 float angle = (float) i / 2f;
                 float rad = (float) Math.toRadians(angle);
                 float jsin = (float) Math.sin(rad);
-                float isin = idx3d_Math.sin(rad);
-                float lutSin = LUT90.sin(rad);
-                float arc = (float) Math.abs(Math.toDegrees(Math.asin(jsin - isin)));
-                float arcLut = (float) Math.abs(Math.toDegrees(Math.asin(jsin - lutSin)));
+                float sin2 = Math2.sin2(rad);
+                float lut90Sin = LUT90.sin(rad);
+                float arc = (float) Math.abs(Math.toDegrees(Math.asin(jsin - sin2)));
+                float arcLut = (float) Math.abs(Math.toDegrees(Math.asin(jsin - lut90Sin)));
 
                 System.out.printf("%7.2f\t %7.7f\t %7.7f\t %7.7f \t %7.7f \t %7.7f \t %b\n",
-                        angle, jsin, isin, lutSin, arc, arcLut, (arcLut <= arc));
+                        angle, jsin, sin2, lut90Sin, arc, arcLut, (arcLut <= arc));
             }
         }
 
@@ -57,6 +67,13 @@ public class MathBench {
         return values;
     }
     
+    /**
+     * Creates a sorted float array with psedo random values between min and max
+     * @param size size of array
+     * @param min - minimal value
+     * @param max - mas value
+     * @return float array with values
+     */
     private static float[] random(int size, double min, double max){
         float[] v = new float[size];
         max = max-min;
@@ -67,19 +84,19 @@ public class MathBench {
         return v;
     }
 
-    private static float testSinTab(int n) {
+    private static float testSinMath2(int n) {
         float v = 0;
         long time = -System.nanoTime();
-        for (int i = 0; i < n; i++) {
-            //result[i] = 
-                v +=    idx3d_Math.sin(sample[i]);
+        for (int i = 0; i < n; i++) {            
+                v +=    Math2.sin(sample[i]);
         }
         time += System.nanoTime();
-       //System.out.println("vidx = "+v);
+        // this is to avoid JVM skip optimizations
+        sum = v;
         return (time / 1e6f);
     }
 
-    private static float testSinLut(int n) {
+    private static float testSinLut90(int n) {
         float v = 0;
         long time = -System.nanoTime();
         for (int i = 0; i < n; i++) {
@@ -87,7 +104,8 @@ public class MathBench {
                 v += LUT90.sin(sample[i]);
         }
         time += System.nanoTime();
-       // System.out.println("slut = "+v);
+       // this is to avoid JVM skip optimizations
+       sum = v;
         return (time / 1e6f);
     }
     
@@ -99,11 +117,12 @@ public class MathBench {
                 v += LUT90.cos(sample[i]);
         }
         time += System.nanoTime();
-     //   System.out.println("clut = "+v);
+        // this is to avoid JVM skip optimizations
+        sum = v;
         return (time / 1e6f);
     }
     
-    private static float testSinNaive(int n) {
+    private static float testSin2Math2(int n) {
         float v = 0;
         long time = -System.nanoTime();
         for (int i = 0; i < n; i++) {
@@ -115,16 +134,7 @@ public class MathBench {
         return (time / 1e6f);
     }
     
-    private static float testCosTab(int n) {
-        float v = 0;
-        long time = -System.nanoTime();
-        for (int i = 0; i < n; i++) {
-            result[i] = idx3d_Math.cos(sample[i]);
-        }
-        time += System.nanoTime();
-        return time / 1e6f;
-    }
-
+      
     private static float testSinLib(int n) {
         long time = -System.nanoTime();
         float v = 0;
@@ -137,17 +147,7 @@ public class MathBench {
         return time / 1e6f;
     }
     
-    private static float testCosLib(int n) {
-        long time = -System.nanoTime();
-        float v = 0;
-        for (int i = 0; i < n; i++) {
-            //result[i] = 
-               v +=   (float) Math.cos(sample[i]);
-        }        
-        time += System.nanoTime();
-       // System.out.println("vjav = " + v);
-        return time / 1e6f;
-    }
+    
     
     /**
      * Test LUT90 class
