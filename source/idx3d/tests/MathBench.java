@@ -43,8 +43,8 @@ public class MathBench {
             System.out.println("\n\nPrecision Test");
             System.out.println("Error is given in angles, given by arcSin(diff)");
             System.out.println("\n\nAngle \t java.Math \t Math2.sin2() \t LUT90.Sin() \t error.Sin2  \t error.LUT90 \t Sin2 win LUT?");
-            for (int i = 0; i < 361; i++) {
-                float angle = (float) i / 2f;
+            for (int i = -360; i < 722; i++) {
+                float angle = (float) i ;
                 float rad = (float) Math.toRadians(angle);
                 float jsin = (float) Math.sin(rad);
                 float sin2 = Math2.sin2(rad); // interpolet LUT sin()

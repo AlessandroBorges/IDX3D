@@ -17,10 +17,12 @@ public class LUT90 {
      * acts as this size is 4 times bigger.
      */
     protected static final int SIZE = 256;
-    /** Mimics a circular **/ 
+    
+    /** Mimics a circular table for angles in range [0..360]**/ 
     private static final int SIZE_x4 = SIZE*4;
+    
     /**
-     * Max angle is 90 or PI/4
+     * Max real angle stored is 90 or PI/2.
      */
     private static final float MAX_ANGLE = (float) (Math.PI / 2.0);
     
@@ -30,8 +32,10 @@ public class LUT90 {
      * Default value is 
      */
     private static final float MIN_ANGLE = (float) (Math.toRadians(12f));
+    
     /** steps to angles */
     private static final float STEP = (float) ((MAX_ANGLE) / SIZE);
+    
     /** Inverse of STEP*/
     private static final float STEP_INV = 1.0f / STEP;
     /**

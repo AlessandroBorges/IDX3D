@@ -12,12 +12,28 @@ import java.util.Arrays;
  */
 public class Math2 {
     
-    private static final int SIZE = 256;
+    /**
+     * Look up table size.
+     * MUST be power of 2.
+     */
+    private static final int SIZE = 512;
+    
+    /**
+     * Angle step in table
+     */
     private static final float STEP = (float)((2.0d*Math.PI)/SIZE);
     private static final float STEP_INV = 1.0f / STEP;
+    
+    /**
+     * THE look up table !
+     * It has extra room for positions used by interpolation, as [index+1],
+     * as well bad index roundings
+     */
     private static final float[] LUT_SIN = new float[SIZE + 2]; // extra room for roundings
-    private static final float PI = (float) Math.PI;
-    private static final float PI_2 = (float) Math.PI / 2.0f;
+    
+    public static final float PI = (float) Math.PI;
+    public static final float PI_2 = (float) Math.PI / 2.0f;
+    
     /**
      * Angles lower than MIN_ANGLE will return sin(x) == x
      * It results on smoother sin(x) transitions in range between [-MIN_ANGLE .. +MIN_ANGLE]  
@@ -25,10 +41,16 @@ public class Math2 {
      */
     private static final float MIN_ANGLE = (float) (Math.toRadians(12f));
     
+    /**
+     * Build look up table
+     */
     static{
         buildLUT();
     }
     
+    /**
+     * Build Look Up Table for sin(x)
+     */
     private static final void buildLUT(){
         for(int i=0; i<LUT_SIN.length; i++){
             float angle = i*STEP;
@@ -43,27 +65,38 @@ public class Math2 {
 	*/
     public static final float sin(final float rad){  
              float ang = rad < 0 ? -rad : rad;   
-          // low angles 
+             // low angles 
              if(ang < MIN_ANGLE){
                  return rad;
-             }   
+             }
+             // below index is used for circular table with size NON-POWER-OF-2  
              //int index = (int)(0.5f + ang*STEP_INV)  % SIZE;
+             // below index is used for circular table with size POWER-OF-2
              int index = (int)(0.5f + ang*STEP_INV)  & (SIZE-1);
              float v = LUT_SIN[index];
              return rad < 0 ? -v : v; // sin(-x) == -sin(x)
     }
     
-        
+    /**
+     * cosine using Look up table    
+     * @param rad - angle in radians
+     * @return cosine of angle rad
+     */
     public static final float cos(final float rad){      
         return sin(rad + PI_2); // cos(x) = sin(x + PI)
     }
     
+    /**
+     * cosine with improved precision, using interpolation.
+     * @param rad - angle in radians
+     * @return
+     */
     public static final float cos2(final float rad){        
         return sin2(rad + PI_2); 
     }
     
 	/**
-	 * sin using interpolation. High precison
+	 * sin using interpolation. High precison.
 	 * @param rad angle in radians
 	 * @return sin
 	 */
@@ -71,7 +104,7 @@ public class Math2 {
         float ang = rad < 0 ? -rad : rad;
        // while(ang > 2 * PI) ang -= 2 * PI; // reduce angle to [0..2PI]            
         
-        if(ang > 2*PI){
+        if(ang >= 2*PI){
             ang = ang - (2*PI * (int)(ang*(1.0f/(2*PI))));
         }
         
@@ -101,20 +134,6 @@ public class Math2 {
             float err = (float)Math.abs(Math.asin(lut2-sin));
             System.out.printf("%7.4f \t%7.4f \t%7.5f \t %7.5f \t %7.5f \t%7.6f\n",degree, angle, sin, lut, lut2, err);            
         }
-        
-        
-//        System.err.println("Testing LUT cos(x) Precision");       
-//        System.err.println("LUT size: " + SIZE);       
-//        System.err.println(" Degree   \t  Rad \t      Math.cos(x)   \t Lut.cos(x)  \t Lut.cos2(x)\t  Dif. cos2 - lut");        
-//        for (int i=0; i<radians.length; i++){
-//            float radian = -radians[i];// (float) (2*Math.PI * Math.random()); // i*STEP;
-//            float degree = (float)Math.toDegrees(radian);
-//            float cos = (float) Math.cos(radian);
-//            float lut =  cos(radian);
-//            float cos2 = cos2(radian); 
-//            System.err.printf("%7.4f \t%7.4f \t%7.5f \t %7.5f \t %7.5f \t%7.6f\n",degree, radian, cos, lut, cos2, (float) (cos2-lut));            
-//        }
-        
         
     }//main
     
