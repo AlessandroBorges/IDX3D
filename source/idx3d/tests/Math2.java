@@ -6,17 +6,18 @@ package idx3d.tests;
 import java.util.Arrays;
 
 /**
- * Testing LUT table
+ * Testing Look-Up Table (LUT), for trigonometric functions sin()/cos().
+ * This versions uses cosine table.
  * @author Alessandro Borges
  *
  */
 public class Math2 {
     
-    /**
+   /**
      * Look up table size.
      * MUST be power of 2.
      */
-    private static final int SIZE = 512;
+    private static final int SIZE = 256;
     
     /**
      * Angle step in table
@@ -29,17 +30,18 @@ public class Math2 {
      * It has extra room for positions used by interpolation, as [index+1],
      * as well bad index roundings
      */
-    private static final float[] LUT_SIN = new float[SIZE + 2]; // extra room for roundings
+    private static final float[] LUT_COS = new float[SIZE + 2]; // extra room for roundings
     
     public static final float PI = (float) Math.PI;
     public static final float PI_2 = (float) Math.PI / 2.0f;
+    private static final int BIT_SIGN = ~(1<<32);
     
     /**
      * Angles lower than MIN_ANGLE will return sin(x) == x
      * It results on smoother sin(x) transitions in range between [-MIN_ANGLE .. +MIN_ANGLE]  
      * Default value is 
      */
-    private static final float MIN_ANGLE = (float) (Math.toRadians(12f));
+    private static final float MIN_ANGLE = (float) (Math.toRadians(10f));
     
     /**
      * Build look up table
@@ -52,38 +54,28 @@ public class Math2 {
      * Build Look Up Table for sin(x)
      */
     private static final void buildLUT(){
-        for(int i=0; i<LUT_SIN.length; i++){
+        for(int i=0; i<LUT_COS.length; i++){
             float angle = i*STEP;
-            LUT_SIN[i] = (float)Math.sin(angle);
+            LUT_COS[i] = (float)Math.cos(angle);
         }
     }
     
     /**
-	* sin() using Look up table.
-	* @param rad - angle in radians
-	* @return sin of rad
-	*/
-    public static final float sin(final float rad){  
-             float ang = rad < 0 ? -rad : rad;   
-             // low angles 
-             if(ang < MIN_ANGLE){
-                 return rad;
-             }
-             // below index is used for circular table with size NON-POWER-OF-2  
-             //int index = (int)(0.5f + ang*STEP_INV)  % SIZE;
-             // below index is used for circular table with size POWER-OF-2
-             int index = (int)(0.5f + ang*STEP_INV)  & (SIZE-1);
-             float v = LUT_SIN[index];
-             return rad < 0 ? -v : v; // sin(-x) == -sin(x)
+    * sin() using Look up table.
+    * @param rad - angle in radians
+    * @return sin of rad
+    */
+    public static final float sin(final float rad){          
+        return LUT_COS[ ((int)(0.5F + (rad - PI/2)*STEP_INV) & (BIT_SIGN)) & (SIZE-1)];           
     }
     
     /**
-     * cosine using Look up table    
+     * cos() using Look up table    
      * @param rad - angle in radians
      * @return cosine of angle rad
      */
-    public static final float cos(final float rad){      
-        return sin(rad + PI_2); // cos(x) = sin(x + PI)
+    public static final float cos(final float rad){ 
+        return LUT_COS[((int)(0.5f + rad*STEP_INV) & (BIT_SIGN)) & (SIZE-1)];        
     }
     
     /**
@@ -91,29 +83,28 @@ public class Math2 {
      * @param rad - angle in radians
      * @return
      */
-    public static final float cos2(final float rad){        
-        return sin2(rad + PI_2); 
+    public static final float cos2(final float rad){  
+        float ang = rad < 0 ? -rad : rad;
+        // ang = rad MOD 2*PI
+        if(ang >= 2*PI){
+             ang = ang - (2*PI * (int)(ang*(1.0f/(2*PI))));
+         }
+         int index = ((int)(ang*STEP_INV)) & (SIZE-1);        
+         float y1 = LUT_COS[index];
+         float y2 = LUT_COS[index + 1];
+         float v =  y1 + (y2-y1)*STEP_INV*(ang - index*STEP);
+         return v; 
     }
     
-	/**
-	 * sin using interpolation. High precison.
-	 * @param rad angle in radians
-	 * @return sin
-	 */
+    /**
+     * sin using interpolation. High precison.
+     * @param rad angle in radians
+     * @return sin
+     */
     public static final float sin2(final float rad){
-        float ang = rad < 0 ? -rad : rad;
-       // while(ang > 2 * PI) ang -= 2 * PI; // reduce angle to [0..2PI]            
-        
-        if(ang >= 2*PI){
-            ang = ang - (2*PI * (int)(ang*(1.0f/(2*PI))));
-        }
-        
-        int index = (int)(ang * STEP_INV) & (SIZE-1);// % SIZE;        
-        float y1 = LUT_SIN[index];
-        float y2 = LUT_SIN[index + 1];
-        float v =  y1 + (y2-y1)*STEP_INV*(ang - index*STEP);
-        return rad < 0 ? -v : v; // sin(-x) == -sin(x)
+        return cos2(rad-PI/2);
   }
+  
   
     ////////////////////////////////////////////////////////////////////
     /**
