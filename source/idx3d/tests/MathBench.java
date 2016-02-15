@@ -24,8 +24,8 @@ public class MathBench {
         
         int size_arr = 10*1000*1000;
         int sets = 10;
-        float min = (float) Math.toRadians(0);
-        float max = (float)Math.toRadians(45);
+        float min = (float) Math.toRadians(-360);
+        float max = (float)Math.toRadians(360);
         //create a float array with size_arr, with values between min and max
         sample = random(size_arr,min, max);       
 
@@ -40,19 +40,20 @@ public class MathBench {
 
         boolean doPrecisionTest = true;
         if (doPrecisionTest) {
-            System.out.println("Precision Test");
-            System.out.println("\n\nAngle \t java.Math \t Math2.sin2() \t LUT90.Sin() \t error.Sin2  \t error.LUT90 \t Lut Win Java.Math?");
+            System.out.println("\n\nPrecision Test");
+            System.out.println("Error is given in angles, given by arcSin(diff)");
+            System.out.println("\n\nAngle \t java.Math \t Math2.sin2() \t LUT90.Sin() \t error.Sin2  \t error.LUT90 \t Sin2 win LUT?");
             for (int i = 0; i < 361; i++) {
                 float angle = (float) i / 2f;
                 float rad = (float) Math.toRadians(angle);
                 float jsin = (float) Math.sin(rad);
-                float sin2 = Math2.sin2(rad);
-                float lut90Sin = LUT90.sin(rad);
+                float sin2 = Math2.sin2(rad); // interpolet LUT sin()
+                float lut90Sin = LUT90.sin(rad); // LUT 90
                 float arc = (float) Math.abs(Math.toDegrees(Math.asin(jsin - sin2)));
                 float arcLut = (float) Math.abs(Math.toDegrees(Math.asin(jsin - lut90Sin)));
 
                 System.out.printf("%7.2f\t %7.7f\t %7.7f\t %7.7f \t %7.7f \t %7.7f \t %b\n",
-                        angle, jsin, sin2, lut90Sin, arc, arcLut, (arcLut <= arc));
+                        angle, jsin, sin2, lut90Sin, arc, arcLut, (arc < arcLut));
             }
         }
 

@@ -16,7 +16,7 @@ public class LUT90 {
      * Higher values improve precision, but this implementation 
      * acts as this size is 4 times bigger.
      */
-    protected static final int SIZE = 128;
+    protected static final int SIZE = 256;
     /** Mimics a circular **/ 
     private static final int SIZE_x4 = SIZE*4;
     /**
