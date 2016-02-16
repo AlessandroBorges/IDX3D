@@ -85,6 +85,19 @@ public class Math2 {
     }
     
     /**
+     * Get  sin(x) and cos(x) in a single call.<br>
+     * 
+     * @param radAngle - angle in radians
+     * @param sincos - float array 
+     * @return float array with sin(x) and cos(x) at index [0] and [1], respect. 
+     */
+    public static float[] fsincos(float radAngle, float[] sincos){
+        sincos[0] = sin(radAngle);
+        sincos[1] = cos(radAngle);
+        return sincos;
+    }
+    
+    /**
      * cosine with improved precision, using interpolation.
      * @param rad - angle in radians
      * @return
