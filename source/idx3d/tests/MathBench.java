@@ -24,8 +24,8 @@ public class MathBench {
         
         int size_arr = 10*1000*1000;
         int sets = 10;
-        float min = (float) Math.toRadians(-360);
-        float max = (float)Math.toRadians(360);
+        float min = (float) Math.toRadians(0);
+        float max = (float)Math.toRadians(45);
         //create a float array with size_arr, with values between min and max
         sample = random(size_arr,min, max);       
 
