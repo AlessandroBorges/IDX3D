@@ -35,9 +35,11 @@
 // | -----------------------------------------------------------------
 package idx3d;
 
-import java.awt.image.*;
+import java.awt.image.ColorModel;
+import java.awt.image.ImageConsumer;
 
-public class idx3d_ImageProducer implements ImageProducerUpdate {
+
+public class IImageProducer implements java.awt.image.ImageProducer{
 
     private ImageConsumer consumer;
     private int w, h;
@@ -46,7 +48,7 @@ public class idx3d_ImageProducer implements ImageProducerUpdate {
     private int hints, sfd;
 
 	// C O N S T R U C T O R
-    public idx3d_ImageProducer(int w, int h, ColorModel cm, int pixel[]) {
+    public IImageProducer(int w, int h, ColorModel cm, int pixel[]) {
         this.w = w;
         this.h = h;
         this.cm = cm;

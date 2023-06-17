@@ -36,15 +36,14 @@
 
 package idx3d;
 
-public class idx3d_ObjectFactory
-// used to create instances of idx3d_Object for given object types
+public class IObjectFactory
 {
 	public final static double pi=3.1415926535;
 	public final static double deg2rad=pi/180;
 
 	// F A C T O R Y   M E T H O D S
 
-	public static idx3d_Object FIELD3D(int resolution, float height)
+	public static IObject FIELD3D(int resolution, float height)
 	{
 		float x,y;
 		float map[][]=new float[resolution][resolution];
@@ -55,10 +54,10 @@ public class idx3d_ObjectFactory
 				y=(float)j/(float)resolution*2-1;
 				map[i][j]=x*x*x*y-y*y*y*x+(float)(Math.sin(x*y*10)/4-0.2);
 			}
-		return idx3d_ObjectFactory.HEIGHTFIELD(map,height,true);
+		return IObjectFactory.HEIGHTFIELD(map,height,true);
 	}
 	
-	public static idx3d_Object HEIGHTFIELD(idx3d_Texture heightmap, float height, boolean doubleSided)
+	public static IObject HEIGHTFIELD(ITexture heightmap, float height, boolean doubleSided)
 	{
 		heightmap.toAverage();
 		float data[][]=new float[heightmap.width][heightmap.height];
@@ -70,13 +69,13 @@ public class idx3d_ObjectFactory
 			for (int i=heightmap.width-1;i>=0;i--)
 				data[i][j]=(float)(heightmap.pixel[offset+i]-127)/127f;
 		}
-		return idx3d_ObjectFactory.HEIGHTFIELD(data,height,doubleSided);
+		return IObjectFactory.HEIGHTFIELD(data,height,doubleSided);
 	}		
 
-	public static idx3d_Object HEIGHTFIELD(float[][] data, float height, boolean doubleSided)
+	public static IObject HEIGHTFIELD(float[][] data, float height, boolean doubleSided)
 	{
-		idx3d_Object newObject=new idx3d_Object();
-		idx3d_Vertex vertex=null;
+		IObject newObject=new IObject();
+		IVertex vertex=null;
 		float xtemp,ytemp,ztemp;
 		int q1,q2,q3,q4;
 		float u,v;
@@ -97,7 +96,7 @@ public class idx3d_ObjectFactory
 				xtemp=-1+xscale*(float)i;
 				ytemp=-1+yscale*(float)j;
 				ztemp=data[i][j]*height;
-				vertex=new idx3d_Vertex(xtemp,ytemp,ztemp);
+				vertex=new IVertex(xtemp,ytemp,ztemp);
 				vertex.u=u; vertex.v=v;
 				newObject.addVertex(vertex);
 				
@@ -113,7 +112,7 @@ public class idx3d_ObjectFactory
 					xtemp=-1+xscale*(float)i;
 					ytemp=-1+yscale*(float)j;
 					ztemp=data[i][j]*height;
-					vertex=new idx3d_Vertex(xtemp,ytemp,ztemp);
+					vertex=new IVertex(xtemp,ytemp,ztemp);
 					vertex.u=u; vertex.v=v;
 					newObject.addVertex(vertex);
 					
@@ -140,17 +139,17 @@ public class idx3d_ObjectFactory
 		return newObject;
 	}
 	
-	public static idx3d_Object CUBE(float size)
+	public static IObject CUBE(float size)
 	{
 		return BOX(size,size,size);
 	}
 	
-	public static idx3d_Object BOX(idx3d_Vector size)
+	public static IObject BOX(IVector size)
 	{
 		return BOX(size.x,size.y,size.z);
 	}
 		
-	public static idx3d_Object BOX(float xsize, float ysize, float zsize)
+	public static IObject BOX(float xsize, float ysize, float zsize)
 	{
 		float x=(float)Math.abs(xsize/2);
 		float y=(float)Math.abs(ysize/2);
@@ -158,7 +157,7 @@ public class idx3d_ObjectFactory
 		
 		float xx,yy,zz;
 		
-		idx3d_Object n=new idx3d_Object();
+		IObject n=new IObject();
 		int[] xflag=new int[6];
 		int[] yflag=new int[6];
 		int[] zflag=new int[6];
@@ -187,60 +186,60 @@ public class idx3d_ObjectFactory
 		return n;
 	}
 	
-	public static idx3d_Object CONE(float height, float radius, int segments)
+	public static IObject CONE(float height, float radius, int segments)
 	{
-		idx3d_Vector[] path=new idx3d_Vector[4];
+		IVector[] path=new IVector[4];
 		float h=height/2;
-		path[0]=new idx3d_Vector(0,h,0);
-		path[1]=new idx3d_Vector(radius,-h,0);
-		path[2]=new idx3d_Vector(radius,-h,0);
-		path[3]=new idx3d_Vector(0,-h,0);
+		path[0]=new IVector(0,h,0);
+		path[1]=new IVector(radius,-h,0);
+		path[2]=new IVector(radius,-h,0);
+		path[3]=new IVector(0,-h,0);
 		
 		return ROTATIONOBJECT(path,segments);
 	}
 	
-	public static idx3d_Object CYLINDER(float height, float radius, int segments)
+	public static IObject CYLINDER(float height, float radius, int segments)
 	{
-		idx3d_Vector[] path=new idx3d_Vector[6];
+		IVector[] path=new IVector[6];
 		float h=height/2;
-		path[0]=new idx3d_Vector(0,h,0);
-		path[1]=new idx3d_Vector(radius,h,0);
-		path[2]=new idx3d_Vector(radius,h,0);
-		path[3]=new idx3d_Vector(radius,-h,0);
-		path[4]=new idx3d_Vector(radius,-h,0);
-		path[5]=new idx3d_Vector(0,-h,0);
+		path[0]=new IVector(0,h,0);
+		path[1]=new IVector(radius,h,0);
+		path[2]=new IVector(radius,h,0);
+		path[3]=new IVector(radius,-h,0);
+		path[4]=new IVector(radius,-h,0);
+		path[5]=new IVector(0,-h,0);
 		
 		return ROTATIONOBJECT(path,segments);
 	}
 	
-	public static idx3d_Object SPHERE(float radius, int segments)
+	public static IObject SPHERE(float radius, int segments)
 	{
-		idx3d_Vector[] path=new idx3d_Vector[segments];
+		IVector[] path=new IVector[segments];
 		
 		float x,y,angle;
 		
-		path[0]=new idx3d_Vector(0,radius,0);
-		path[segments-1]=new idx3d_Vector(0,-radius,0);
+		path[0]=new IVector(0,radius,0);
+		path[segments-1]=new IVector(0,-radius,0);
 		
 		for(int i=1;i<segments-1;i++)
 		{
 			angle=-(((float)i/(float)(segments-2))-0.5f)*3.14159265f;
 			x=(float)Math.cos(angle)*radius;
 			y=(float)Math.sin(angle)*radius;
-			path[i]=new idx3d_Vector(x,y,0);
+			path[i]=new IVector(x,y,0);
 		}
 		
 		return ROTATIONOBJECT(path,segments);
 	}
 	
-	public static idx3d_Object ROTATIONOBJECT(idx3d_Vector[] path, int sides)
+	public static IObject ROTATIONOBJECT(IVector[] path, int sides)
 	{
 		int steps=sides+1;
-		idx3d_Object newObject=new idx3d_Object();
+		IObject newObject=new IObject();
 		double alpha=2*pi/((double)steps-1);
 		float qx,qz;
 		int nodes=path.length;
-		idx3d_Vertex vertex=null;
+		IVertex vertex=null;
 		float u,v;    // Texture coordinates
 			
 		for (int j=0;j<steps;j++)
@@ -251,7 +250,7 @@ public class idx3d_ObjectFactory
 				v=(float)i/(float)(nodes-1);
 				qx=(float)(path[i].x*Math.cos(j*alpha)+path[i].z*Math.sin(j*alpha));
 				qz=(float)(path[i].z*Math.cos(j*alpha)-path[i].x*Math.sin(j*alpha));
-				vertex=new idx3d_Vertex(qx,path[i].y,qz);
+				vertex=new IVertex(qx,path[i].y,qz);
 				vertex.u=u; vertex.v=v; 
 				newObject.addVertex(vertex);
 			}
@@ -276,57 +275,57 @@ public class idx3d_ObjectFactory
 
 	}
 	
-	public static idx3d_Object TORUSKNOT(float p, float q,  float r_tube, float r_out, float r_in, float h, int segments, int steps)
+	public static IObject TORUSKNOT(float p, float q,  float r_tube, float r_out, float r_in, float h, int segments, int steps)
 	{
 		float x,y,z,r,t,theta,temp;
 		
-		idx3d_Vector[] path=new idx3d_Vector[segments+1];
+		IVector[] path=new IVector[segments+1];
 		for (int i=0;i<segments+1;i++)
 		{
 			t=2*3.14159265f*i/(float)segments;
-			r=r_out+r_in*idx3d_Math.cos(p*t);
-			z=h*idx3d_Math.sin(p*t);
+			r=r_out+r_in*IMath.cos(p*t);
+			z=h*IMath.sin(p*t);
 			theta=q*t;
-			x=r*idx3d_Math.cos(theta);
-			y=r*idx3d_Math.sin(theta);
-			path[i]=new idx3d_Vector(x,y,z);
+			x=r*IMath.cos(theta);
+			y=r*IMath.sin(theta);
+			path[i]=new IVector(x,y,z);
 		}
 		return TUBE(path,r_tube,steps, true);
 	}
 	
-	public static idx3d_Object SPIRAL(float h, float r_out,  float r_in, float r_tube, float w, float f, int segments, int steps)
+	public static IObject SPIRAL(float h, float r_out,  float r_in, float r_tube, float w, float f, int segments, int steps)
 	{
 		float x,y,z,r,t,theta,temp;
 		
-		idx3d_Vector[] path=new idx3d_Vector[segments+1];
+		IVector[] path=new IVector[segments+1];
 		for (int i=0;i<segments+1;i++)
 		{
 			t=(float)i/(float)segments;
-			r=r_out+r_in*idx3d_Math.sin(2*3.14159265f*f*t);
+			r=r_out+r_in*IMath.sin(2*3.14159265f*f*t);
 			z=(h/2)+h*t;
 			theta=2*3.14159265f*w*t;
-			x=r*idx3d_Math.cos(theta);
-			y=r*idx3d_Math.sin(theta);
-			path[i]=new idx3d_Vector(x,y,z);
+			x=r*IMath.cos(theta);
+			y=r*IMath.sin(theta);
+			path[i]=new IVector(x,y,z);
 		}
 		return TUBE(path,r_tube,steps, false);
 	}
 	
-	public static idx3d_Object TUBE(idx3d_Vector[] path, float r, int steps, boolean closed)
+	public static IObject TUBE(IVector[] path, float r, int steps, boolean closed)
 	{
-		idx3d_Vector[] circle=new idx3d_Vector[steps];
+		IVector[] circle=new IVector[steps];
 		float angle;
 		for (int i=0; i<steps; i++)
 		{
 			angle=2*3.14159265f*(float)i/(float)steps;
-			circle[i]= new idx3d_Vector(r*idx3d_Math.cos(angle),r*idx3d_Math.sin(angle),0f);
+			circle[i]= new IVector(r*IMath.cos(angle),r*IMath.sin(angle),0f);
 		}
 		
-		idx3d_Object newObject=new idx3d_Object();
+		IObject newObject=new IObject();
 		int segments=path.length;
-		idx3d_Vector forward,up,right;
-		idx3d_Matrix frenetmatrix;
-		idx3d_Vertex tempvertex;
+		IVector forward,up,right;
+		IMatrix frenetmatrix;
+		IVertex tempvertex;
 		float relx,rely;
 		int a,b,c,d;
 		
@@ -334,18 +333,18 @@ public class idx3d_ObjectFactory
 		{
 			// Calculate frenet frame matrix
 			
-				if (i!=segments-1) forward=idx3d_Vector.sub(path[i+1],path[i]);
+				if (i!=segments-1) forward=IVector.sub(path[i+1],path[i]);
 				else
 				{
-					if (!closed) forward=idx3d_Vector.sub(path[i],path[i-1]);
-					else  forward=idx3d_Vector.sub(path[1],path[0]);
+					if (!closed) forward=IVector.sub(path[i],path[i-1]);
+					else  forward=IVector.sub(path[1],path[0]);
 				}
 					
 				forward.normalize();
-				up=new idx3d_Vector(0f,0f,1f);
-				right=idx3d_Vector.getNormal(forward,up);
-				up=idx3d_Vector.getNormal(forward,right);
-				frenetmatrix=new idx3d_Matrix(right,up,forward);
+				up=new IVector(0f,0f,1f);
+				right=IVector.getNormal(forward,up);
+				up=IVector.getNormal(forward,right);
+				frenetmatrix=new IMatrix(right,up,forward);
 				frenetmatrix.shift(path[i].x,path[i].y,path[i].z);
 			
 			// Add nodes
@@ -354,7 +353,7 @@ public class idx3d_ObjectFactory
 				for (int k=0; k<steps; k++)
 				{
 					rely=(float)k/(float)steps;
-					tempvertex=new idx3d_Vertex(circle[k].transform(frenetmatrix));
+					tempvertex=new IVertex(circle[k].transform(frenetmatrix));
 					tempvertex.u=relx; tempvertex.v=rely;
 					newObject.addVertex(tempvertex);
 				}

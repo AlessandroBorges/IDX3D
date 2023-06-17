@@ -44,23 +44,23 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.awt.Image;
 
-public final class idx3d_Scene extends idx3d_CoreObject
+public final class IScene extends ICoreObject
 {
 	//Release Information
 	
-		public final static String version="3.1.001";
-		public final static String release="29.05.2000";
+		public final static String version="3.5.001";
+		public final static String release="31.05.2023";
 		
 	// F I E L D S		
 
-		public idx3d_RenderPipeline renderPipeline;
+		public IRenderPipeline renderPipeline;
 		public int width,height;
 
-		public idx3d_Environment environment=new idx3d_Environment();
-		public idx3d_Camera defaultCamera=idx3d_Camera.FRONT();
+		public IEnvironment environment=new IEnvironment();
+		public ICamera defaultCamera=ICamera.FRONT();
 		
-		public idx3d_Object object[];
-		public idx3d_Light light[];
+		public IObject object[];
+		public ILight light[];
 		public int objects=0;
 		public int lights=0;
 
@@ -69,13 +69,13 @@ public final class idx3d_Scene extends idx3d_CoreObject
 		
 		protected boolean preparedForRendering=false;
 		
-		public idx3d_Vector normalizedOffset=new idx3d_Vector(0f,0f,0f);
+		public IVector normalizedOffset=new IVector(0f,0f,0f);
 		public float normalizedScale=1f;
 		private static boolean instancesRunning=false;
 		
 	// D A T A   S T R U C T U R E S
 		
-		public Map<String, idx3d_Object> objectData=new HashMap<String, idx3d_Object>();
+		public Map<String, IObject> objectData=new HashMap<String, IObject>();
 		public Hashtable lightData=new Hashtable();
 		public Hashtable materialData=new Hashtable();
 		public Hashtable cameraData=new Hashtable();
@@ -83,14 +83,14 @@ public final class idx3d_Scene extends idx3d_CoreObject
 
 	// C O N S T R U C T O R S
 	
-		private idx3d_Scene()
+		private IScene()
 		{
 		}
 	
-		public idx3d_Scene(int w, int h)
+		public IScene(int w, int h)
 		{
 			showInfo(); width=w; height=h;
-			renderPipeline= new idx3d_RenderPipeline(this,w,h);
+			renderPipeline= new IRenderPipeline(this,w,h);
 		}
 
 		
@@ -124,12 +124,12 @@ public final class idx3d_Scene extends idx3d_CoreObject
 			{
 				objectsNeedRebuild=false;
 				objects=objectData.size();
-				object=new idx3d_Object[objects];
+				object=new IObject[objects];
 				//Enumeration en=objectData.elements();
-				Iterator<idx3d_Object> en = objectData.values().iterator(); 
+				Iterator<IObject> en = objectData.values().iterator(); 
 				for (int i=objects-1;i>=0;i--)
 				{
-					object[i]=(idx3d_Object)en.next();
+					object[i]=(IObject)en.next();
 					object[i].id=i;
 					object[i].rebuild();
 				}
@@ -140,32 +140,32 @@ public final class idx3d_Scene extends idx3d_CoreObject
 			{
 				lightsNeedRebuild=false;
 				lights=lightData.size();
-				light=new idx3d_Light[lights];				
+				light=new ILight[lights];				
 				Enumeration en=lightData.elements();
-				for (int i=lights-1;i>=0;i--) light[i]=(idx3d_Light)en.nextElement();
+				for (int i=lights-1;i>=0;i--) light[i]=(ILight)en.nextElement();
 
 			}
 		}
 
 	// A C C E S S O R S
 
-		public idx3d_Object object(String key)   { return (idx3d_Object)  objectData.get(key);}
-		public idx3d_Light light(String key)     { return (idx3d_Light)   lightData.get(key);}
-		public idx3d_Material material(String key) { return (idx3d_Material) materialData.get(key);}
-		public idx3d_Camera camera(String key) { return (idx3d_Camera) cameraData.get(key);}
+		public IObject object(String key)   { return (IObject)  objectData.get(key);}
+		public ILight light(String key)     { return (ILight)   lightData.get(key);}
+		public IMaterial material(String key) { return (IMaterial) materialData.get(key);}
+		public ICamera camera(String key) { return (ICamera) cameraData.get(key);}
 		
 	// O B J E C T   M A N A G E M E N T
 
-		public void addObject(String key, idx3d_Object obj){ obj.name=key; objectData.put(key,obj); obj.parent=this; objectsNeedRebuild=true;}
+		public void addObject(String key, IObject obj){ obj.name=key; objectData.put(key,obj); obj.parent=this; objectsNeedRebuild=true;}
 		public void removeObject(String key) { objectData.remove(key); objectsNeedRebuild=true; preparedForRendering=false;}
 
-		public void addLight(String key, idx3d_Light l) { lightData.put(key,l); lightsNeedRebuild=true;}
+		public void addLight(String key, ILight l) { lightData.put(key,l); lightsNeedRebuild=true;}
 		public void removeLight(String key) { lightData.remove(key); lightsNeedRebuild=true; preparedForRendering=false;}
 
-		public void addMaterial(String key, idx3d_Material m) {materialData.put(key,m);}
+		public void addMaterial(String key, IMaterial m) {materialData.put(key,m);}
 		public void removeMaterial(String key) { materialData.remove(key); }
 		
-		public void addCamera(String key, idx3d_Camera c) {cameraData.put(key,c);}
+		public void addCamera(String key, ICamera c) {cameraData.put(key,c);}
 		public void removeCamera(String key) { cameraData.remove(key); }
 
 
@@ -190,7 +190,7 @@ public final class idx3d_Scene extends idx3d_CoreObject
 		}
 				
 	
-    public final void render(idx3d_Camera cam) {
+    public final void render(ICamera cam) {
         renderPipeline.render(cam);
     }
 
@@ -220,7 +220,7 @@ public final class idx3d_Scene extends idx3d_CoreObject
         renderPipeline.useIdBuffer(useIdBuffer);
     }
 		
-		public idx3d_Triangle identifyTriangleAt(int xpos, int ypos)
+		public ITriangle identifyTriangleAt(int xpos, int ypos)
 		{
 			if (!renderPipeline.useIdBuffer) return null;
 			if (xpos<0 || xpos>=width) return null;
@@ -233,49 +233,45 @@ public final class idx3d_Scene extends idx3d_CoreObject
 			return object[idCode>>16].triangle[idCode&0xFFFF];
 		}
 		
-		public idx3d_Object identifyObjectAt(int xpos, int ypos)
+		public IObject identifyObjectAt(int xpos, int ypos)
 		{
-			idx3d_Triangle tri=identifyTriangleAt(xpos,ypos);
+			ITriangle tri=identifyTriangleAt(xpos,ypos);
 			if (tri==null) return null;
 			return tri.parent;
 		}
 
 	// P U B L I C   M E T H O D S
 	
-		public java.awt.Dimension size()
-		{
-			return new java.awt.Dimension(width,height);
-		}
+	public java.awt.Dimension size() {
+		return new java.awt.Dimension(width, height);
+	}
 	
-		public void resize(int w, int h)
-		{
-			if ((width==w)&&(height==h)) return;
-			width=w;
-			height=h;
-			renderPipeline.resize(w,h);
-		}
-	
-		public void setBackgroundColor(int bgcolor)
-		{
-			environment.bgcolor=bgcolor;
-		}
-		
-		public void setBackground(idx3d_Texture t)
-		{
-			environment.setBackground(t);
-		}
+	public void resize(int w, int h) {
+		if ((width == w) && (height == h))
+			return;
+		width = w;
+		height = h;
+		renderPipeline.resize(w, h);
+	}
 
-		public void setAmbient(int ambientcolor)
-		{
-			environment.ambient=ambientcolor;
-		}
+	public void setBackgroundColor(int bgcolor) {
+		environment.bgcolor = bgcolor;
+	}
 
-		public int countVertices()
-		{
-			int counter=0;
-			for (int i=0;i<objects;i++) counter+=object[i].vertices;
-			return counter;
-		}
+	public void setBackground(ITexture t) {
+		environment.setBackground(t);
+	}
+
+	public void setAmbient(int ambientcolor) {
+		environment.ambient = ambientcolor;
+	}
+
+	public int countVertices() {
+		int counter = 0;
+		for (int i = 0; i < objects; i++)
+			counter += object[i].vertices;
+		return counter;
+	}
 		
 		public int countTriangles()
 		{
@@ -298,11 +294,11 @@ public final class idx3d_Scene extends idx3d_CoreObject
 			objectsNeedRebuild=true;				
 			rebuild();
 			
-			idx3d_Vector min, max, tempmax, tempmin;
+			IVector min, max, tempmax, tempmin;
 			if (objects==0) return;
 			
-			matrix=new idx3d_Matrix();
-			normalmatrix=new idx3d_Matrix();
+			matrix=new IMatrix();
+			normalmatrix=new IMatrix();
 			
 			max=object[0].max();
 			min=object[0].min();
@@ -328,13 +324,16 @@ public final class idx3d_Scene extends idx3d_CoreObject
 			float diameter=(xdist>ydist)?xdist:ydist;
 			diameter=(zdist>diameter)?zdist:diameter;
 			
-			normalizedOffset=new idx3d_Vector(xmed,ymed,zmed);
+			normalizedOffset=new IVector(xmed,ymed,zmed);
 			normalizedScale=2/diameter;
 
 			shift(normalizedOffset.reverse());
 			scale(normalizedScale);
 			
 		}
+		
+		
+		
 
 	// P R I V A T E   M E T H O D S
 }

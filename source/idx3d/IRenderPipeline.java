@@ -36,21 +36,16 @@
 
 package idx3d;
 
-import java.awt.Image;
-import java.util.Vector;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.List;
-import java.util.TreeSet;
 
-public class idx3d_RenderPipeline
+public class IRenderPipeline
 {
 	// F I E L D S
 
-		public idx3d_Screen screen;
-		idx3d_Scene scene;
-		public idx3d_Lightmap lightmap;
+		public IScreen screen;
+		IScene scene;
+		public ILightmap lightmap;
 
 		private boolean resizingRequested=false;
 		private boolean antialiasChangeRequested=false;
@@ -60,14 +55,14 @@ public class idx3d_RenderPipeline
 		boolean useIdBuffer=false;
    
    /** temp matrixes **/ 
-   private idx3d_Matrix m = new idx3d_Matrix();
-   private idx3d_Matrix nm = new idx3d_Matrix();
-   private idx3d_Matrix vertexProjection = new idx3d_Matrix();
-   private idx3d_Matrix normalProjection = new idx3d_Matrix();
+   private IMatrix m = new IMatrix();
+   private IMatrix nm = new IMatrix();
+   private IMatrix vertexProjection = new IMatrix();
+   private IMatrix normalProjection = new IMatrix();
 
-   private idx3d_Rasterizer      rasterizer;
-   private List<idx3d_Triangle>  opaqueQueue              = new ArrayList<idx3d_Triangle>();
-   private List<idx3d_Triangle>  transparentQueue         = new ArrayList<idx3d_Triangle>();
+   private IRasterizer      rasterizer;
+   private List<ITriangle>  opaqueQueue              = new ArrayList<ITriangle>();
+   private List<ITriangle>  transparentQueue         = new ArrayList<ITriangle>();
       
 
     // Q U I C K R E F E R E N C E S
@@ -82,11 +77,11 @@ public class idx3d_RenderPipeline
 
 	// C O N S T R U C T O R S
 
-    public idx3d_RenderPipeline(idx3d_Scene scene, int w, int h) {
+    public IRenderPipeline(IScene scene, int w, int h) {
         this.scene = scene;
-        screen = new idx3d_Screen(w, h);
+        screen = new IScreen(w, h);
         zBuffer = new int[screen.w * screen.h];
-        rasterizer = new idx3d_Rasterizer(this);
+        rasterizer = new IRasterizer(this);
     }	
 
 	// P U B L I C   M E T H O D S
@@ -97,7 +92,7 @@ public class idx3d_RenderPipeline
     }
 
     public float getFPS() {
-        return (float) ((int) (screen.FPS * 100)) / 100;
+        return (float) ((int) (screen.FPS * 100f)) / 100f;
     }
 
     public void resize(int w, int h) {
@@ -107,21 +102,21 @@ public class idx3d_RenderPipeline
     }
 
     public void buildLightMap() {
-        if (lightmap == null) lightmap = new idx3d_Lightmap(scene);
+        if (lightmap == null) lightmap = new ILightmap(scene);
         else lightmap.rebuildLightmap();
         rasterizer.loadLightmap(lightmap);
     }
  
 		
-  public final void render(idx3d_Camera cam){
+  public final void render(ICamera cam){
       // Resize if requested
       if (resizingRequested) performResizing();
       if (antialiasChangeRequested) performAntialiasChange();
       rasterizer.rebuildReferences(this);
       
       // Clear buffers
-      idx3d_Math.clearBuffer2(zBuffer,zFar);
-      if (useIdBuffer) idx3d_Math.clearBuffer2(idBuffer,-1);
+      IMath.clearBuffer2(zBuffer,zFar);
+      if (useIdBuffer) IMath.clearBuffer2(idBuffer,-1);
       if (scene.environment.background!=null)
           screen.drawBackground(scene.environment.background,0,0,screen.w,screen.h);
       else 
@@ -132,16 +127,16 @@ public class idx3d_RenderPipeline
       scene.prepareForRendering();
       emptyQueues();
      		
-	//idx3d_Matrix m =idx3d_Matrix.multiply(cam.getMatrix(),scene.matrix);
-	//idx3d_Matrix nm=idx3d_Matrix.multiply(cam.getNormalMatrix(),scene.normalmatrix);
-	//idx3d_Matrix vertexProjection = null;
-        // idx3d_Matrix normalProjection = null;        
-        idx3d_Matrix.multiply(cam.getMatrix(),scene.matrix, m);
-        idx3d_Matrix.multiply(cam.getNormalMatrix(),scene.normalmatrix,nm);
+	//IMatrix m =IMatrix.multiply(cam.getMatrix(),scene.matrix);
+	//IMatrix nm=IMatrix.multiply(cam.getNormalMatrix(),scene.normalmatrix);
+	//IMatrix vertexProjection = null;
+        // IMatrix normalProjection = null;        
+        IMatrix.multiply(cam.getMatrix(),scene.matrix, m);
+        IMatrix.multiply(cam.getNormalMatrix(),scene.normalmatrix,nm);
 
-        idx3d_Object obj;
-        idx3d_Triangle t;
-        idx3d_Vertex v;
+        IObject obj;
+        ITriangle t;
+        IVertex v;
         int w = screen.w;
         int h = screen.h;
         for (int id = scene.objects - 1; id >= 0; id--) {
@@ -169,7 +164,7 @@ public class idx3d_RenderPipeline
                }
             }
 				
-	idx3d_Triangle[] tri;
+	ITriangle[] tri;
 	tri=getOpaqueQueue();
 	if (tri!=null)
 	    for (int i=topOpaque - 1;i>=0;i--){
@@ -216,7 +211,7 @@ public class idx3d_RenderPipeline
         transparentQueue.clear();
     }
 
-    private void enqueueTriangle(idx3d_Triangle tri) {
+    private void enqueueTriangle(ITriangle tri) {
         if (tri.parent.material == null) return;
         if (tri.visible == false) return;
         if ((tri.parent.material.transparency == 255) && (tri.parent.material.reflectivity == 0)) return;
@@ -229,26 +224,26 @@ public class idx3d_RenderPipeline
 
     //
     
-    private idx3d_Triangle[] triTrans;
+    private ITriangle[] triTrans;
     private int topTrans = 0;
     private int topOpaque = 0;
-    private idx3d_Triangle[] triOpaque;
+    private ITriangle[] triOpaque;
     
     /**
    * 
    * @return 
    */
-private idx3d_Triangle[] getOpaqueQueue(){
+private ITriangle[] getOpaqueQueue(){
     if (opaqueQueue.isEmpty()) return null;    
         int sz = opaqueQueue.size();
         if (triOpaque == null || triOpaque.length < sz || topOpaque > 2 * sz) {
-            triOpaque = new idx3d_Triangle[(int)(sz * 1.44f)];
+            triOpaque = new ITriangle[(int)(sz * 1.44f)];
             topOpaque = sz;
             // System.err.println("opaque size " +sz);
         } else topOpaque = sz;
         int id = 0;
         for (int i = 0; i < sz; i++){     
-            triOpaque[id++] = (idx3d_Triangle) opaqueQueue.get(i);
+            triOpaque[id++] = (ITriangle) opaqueQueue.get(i);
         }   
        sortTriangles(triOpaque, 0, topOpaque - 1);       
         return triOpaque;
@@ -259,16 +254,16 @@ private idx3d_Triangle[] getOpaqueQueue(){
    * 
    * @return 
    */
-    private idx3d_Triangle[] getTransparentQueue() {
+    private ITriangle[] getTransparentQueue() {
         if (transparentQueue.size() == 0) return null;        
         int sz = transparentQueue.size();
         if (triTrans == null || triTrans.length < sz || topTrans > 2 * sz) {
-            triTrans = new idx3d_Triangle[(int)(sz * 1.44f) ];
+            triTrans = new ITriangle[(int)(sz * 1.44f) ];
             topTrans = sz;
         } else topTrans = sz;
         int id = 0;
         for (int i = 0; i < topTrans; i++) {
-            triTrans[id++] = (idx3d_Triangle) transparentQueue.get(i);
+            triTrans[id++] = (ITriangle) transparentQueue.get(i);
         }
         //System.out.println("*******************");
         return sort(triTrans, 0, topTrans - 1);
@@ -287,7 +282,7 @@ private idx3d_Triangle[] getOpaqueQueue(){
      * @param end - end index
      * @return the same tri as a sorted list
      */
-    private idx3d_Triangle[] sort(idx3d_Triangle[] tri, int start, int end){
+    private ITriangle[] sort(ITriangle[] tri, int start, int end){
         sortTriangles(tri, start, end);
         InsertSort.insertionSort(tri, start, end);
         return tri;
@@ -295,7 +290,7 @@ private idx3d_Triangle[] getOpaqueQueue(){
     
     
     
-    private idx3d_Triangle[] sortTriangles(idx3d_Triangle[] tri, int start, int end) {
+    private ITriangle[] sortTriangles(ITriangle[] tri, int start, int end) {
        // System.out.print("QuickSort - ["+ (++depth) + "] \t" + start +" - " + end);
         if((end - start) < KMAX){
           //  depth--;
@@ -306,7 +301,7 @@ private idx3d_Triangle[] getOpaqueQueue(){
         float m = (tri[start].dist + tri[end].dist) / 2f;
         int i = start;
         int j = end;
-        idx3d_Triangle temp;
+        ITriangle temp;
 
         do {
             while (tri[i].dist > m)
@@ -332,17 +327,17 @@ private idx3d_Triangle[] getOpaqueQueue(){
     
     ////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////
-    private idx3d_Triangle[] tmpArr = null;
+    private ITriangle[] tmpArr = null;
     
-    private  void mergeSort(idx3d_Triangle[] a, int l, int r) {
+    private  void mergeSort(ITriangle[] a, int l, int r) {
         int len = r-l;
         if(tmpArr == null || tmpArr.length < len)
-         tmpArr = new idx3d_Triangle[2*a.length];        
+         tmpArr = new ITriangle[2*a.length];        
         //mergeSort(a, tmp, 0, a.length - 1);
         mergeSort(a, tmpArr, l, r);
     }
 
-    private static void mergeSort(idx3d_Triangle[] a, idx3d_Triangle[] tmp, int left, int right) {
+    private static void mergeSort(ITriangle[] a, ITriangle[] tmp, int left, int right) {
         if (left < right) {
             int center = (left + right) / 2;
             mergeSort(a, tmp, left, center);
@@ -351,7 +346,7 @@ private idx3d_Triangle[] getOpaqueQueue(){
         }
     }
 
-    private static void merge(idx3d_Triangle[] a, idx3d_Triangle[] tmp, int left, int right, int rightEnd) {
+    private static void merge(ITriangle[] a, ITriangle[] tmp, int left, int right, int rightEnd) {
         int leftEnd = right - 1;
         int k = left;
         int num = rightEnd - left + 1;

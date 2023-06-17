@@ -36,26 +36,22 @@
 
 package idx3d;
 
-public abstract class idx3d_FXPlugin
-// fx plugin superclass
+public class IEdge
 {
-	// F I E L D S
-
-		public  idx3d_Scene scene=null;
-		public idx3d_Screen screen=null;
-
-
-	// C O N S T R U C T O R    M E T H O D S
+	IVertex a,b;
 	
-		public idx3d_FXPlugin(idx3d_Scene scene)
+	// C O N S T R U C T O R S
+	
+		private IEdge()
 		{
-			this.scene=scene;
-			screen=scene.renderPipeline.screen;
+		}
+	
+		public IEdge(IVertex v1, IVertex v2)
+		{
+			a=v1;
+			b=v2;
 		}
 		
-	// A B S T R A C T   M E T H O D S
-	
-		public abstract void apply();
-		// Applys the effect on the scene / screen
-
+		public IVertex start() {	return a;	}
+		public IVertex end() {return b; }
 }

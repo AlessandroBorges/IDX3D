@@ -36,23 +36,51 @@
 
 package idx3d;
 
-public class idx3d_Environment
+public class ITextureProjector
 {
-	// F I E L D S
-
-		public int ambient=0;
-
-		public int fogcolor=0;
-		public int fogfact=0;
-		public int bgcolor=0xFF000000;
-		public idx3d_Texture background=null;
-
-	// P U B L I C   M E T H O D S
-
-
-		public void setBackground(idx3d_Texture t)
+	public static final void projectFrontal(IObject obj)
+	{
+		obj.rebuild();
+		IVector min=obj.min();
+		IVector max=obj.max();
+		float du=1/(max.x-min.x);
+		float dv=1/(max.y-min.y);
+		for (int i=0; i<obj.vertices;i++)
 		{
-			background=t;
+			obj.vertex[i].u=(obj.vertex[i].pos.x-min.x)*du;
+			obj.vertex[i].v=1-(obj.vertex[i].pos.y-min.y)*dv;
 		}
+	}
+
+	public static final void projectTop(IObject obj)
+	{
+		obj.rebuild();
+		IVector min=obj.min();
+		IVector max=obj.max();
+		float du=1/(max.x-min.x);
+		float dv=1/(max.z-min.z);
+		for (int i=0; i<obj.vertices;i++)
+		{
+			obj.vertex[i].u=(obj.vertex[i].pos.x-min.x)*du;
+			obj.vertex[i].v=(obj.vertex[i].pos.z-min.z)*dv;
+		}
+	}
 	
+	public static final void projectCylindric(IObject obj)
+	{
+		obj.rebuild();
+		IVector min=obj.min();
+		IVector max=obj.max();
+		float dz=1/(max.z-min.z);
+		for (int i=0; i<obj.vertices;i++)
+		{
+			obj.vertex[i].pos.buildCylindric();
+			obj.vertex[i].u=obj.vertex[i].pos.theta/(2*3.14159265f);
+			obj.vertex[i].v=(obj.vertex[i].pos.z-min.z)*dz;
+		}
+	}
+	
+		
+
+
 }

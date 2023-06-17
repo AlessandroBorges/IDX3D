@@ -39,21 +39,20 @@ package idx3d;
 import java.io.*;
 import java.net.*;
 
-public class idx3d_3ds_Exporter
-// Exports a scene to a 3ds (3d Studio Max) Ressource
+public class I3ds_Exporter
 {
 	// F I E L D S
 
 	// C O N S T R U C T O R S
 
-		private idx3d_3ds_Exporter()
+		private I3ds_Exporter()
 		{
 		}
 
 
 	// P U B L I C   M E T H O D S
 
-		public static void exportToStream(OutputStream outStream, idx3d_Scene source)
+		public static void exportToStream(OutputStream outStream, IScene source)
 		{
 			System.out.println(">> Exporting scene to 3ds stream ...");
 			BufferedOutputStream out=new BufferedOutputStream(outStream);
@@ -98,7 +97,7 @@ public class idx3d_3ds_Exporter
 
 	// J U N K   E X P O R T
 
-		private static void exportScene(idx3d_Scene scene, OutputStream out) throws IOException
+		private static void exportScene(IScene scene, OutputStream out) throws IOException
 		{
 			scene.rebuild();
 			int runlength=0;
@@ -115,7 +114,7 @@ public class idx3d_3ds_Exporter
 			for (int i=0;i<scene.objects;i++) exportObject(scene.object[i], out);
 		}
 
-		private static void exportObject(idx3d_Object obj, OutputStream out) throws IOException
+		private static void exportObject(IObject obj, OutputStream out) throws IOException
 		{
 			int vJunkSize=2+12*obj.vertices; 
 			int tJunkSize=2+8*obj.triangles;
@@ -143,14 +142,14 @@ public class idx3d_3ds_Exporter
 			for (int i=0;i<obj.vertices;i++) exportMappingCoordinates(obj.vertex[i], out);
 		}
 
-		private static void exportVertex(idx3d_Vertex v, OutputStream out) throws IOException
+		private static void exportVertex(IVertex v, OutputStream out) throws IOException
 		{
 			writeFloat(v.pos.x,out);
 			writeFloat(-v.pos.y,out);
 			writeFloat(v.pos.z,out);
 		}
 
-		private static void exportTriangle(idx3d_Triangle t, OutputStream out) throws IOException
+		private static void exportTriangle(ITriangle t, OutputStream out) throws IOException
 		{
 			writeShort(t.p1.id,out);
 			writeShort(t.p2.id,out);
@@ -158,7 +157,7 @@ public class idx3d_3ds_Exporter
 			writeShort(0,out);
 		}
 
-		private static void exportMappingCoordinates(idx3d_Vertex v, OutputStream out) throws IOException
+		private static void exportMappingCoordinates(IVertex v, OutputStream out) throws IOException
 		{
 			writeFloat(v.u,out);
 			writeFloat(v.v,out);

@@ -36,11 +36,10 @@
 
 package idx3d;
 
-import static idx3d.idx3d_Color.ALPHA;
-import static idx3d.idx3d_Color.MASK7Bit;
+import static idx3d.IColor.ALPHA;
+import static idx3d.IColor.MASK7Bit;
 
-public final class idx3d_Rasterizer
-// Rasterizer stage of the render pipeline
+public final class IRasterizer
 {
 	private boolean materialLoaded=false;
 	private boolean lightmapLoaded=false;
@@ -52,7 +51,7 @@ public final class idx3d_Rasterizer
 		private int transparency=0;
 		private int reflectivity=0;
 		private int refraction=0;
-		private idx3d_Texture texture=null;
+		private ITexture texture=null;
 		private int[] envmap=null;
 		private int[] diffuse=null;
 		private int[] specular=null;
@@ -74,7 +73,7 @@ public final class idx3d_Rasterizer
 		
 	//  R E G I S T E R S
 
-		idx3d_Vertex p1,p2,p3,tempVertex;
+		IVertex p1,p2,p3,tempVertex;
 		private int
 			bkgrd,c,s,lutID,r,   //lutID is position in LUT (diffuse,envmap,specular)
 		
@@ -94,7 +93,7 @@ public final class idx3d_Rasterizer
 			dtx,dty,tx,ty,
 			dtxBase,dtyBase;
 			
-		idx3d_Screen screen;
+		IScreen screen;
 		int[] zBuffer;
 		int[] idBuffer;
 		int width,height;
@@ -105,7 +104,7 @@ public final class idx3d_Rasterizer
 		
 	// Constructor
 	
-		public idx3d_Rasterizer(idx3d_RenderPipeline pipeline)
+		public IRasterizer(IRenderPipeline pipeline)
 		{
 			rebuildReferences(pipeline);			
 			loadLightmap(pipeline.lightmap);
@@ -113,7 +112,7 @@ public final class idx3d_Rasterizer
 		
 	// References
 	
-		void rebuildReferences(idx3d_RenderPipeline pipeline)
+		void rebuildReferences(IRenderPipeline pipeline)
 		{
 			screen=pipeline.screen;
 			zBuffer=pipeline.zBuffer;
@@ -125,7 +124,7 @@ public final class idx3d_Rasterizer
 		
 	// Lightmap loader
 	
-		public void loadLightmap(idx3d_Lightmap lm)
+		public void loadLightmap(ILightmap lm)
 		{
 			if (lm==null) return;
 			diffuse=lm.diffuse;
@@ -136,7 +135,7 @@ public final class idx3d_Rasterizer
 		
 	// Material loader
 		
-		public void loadMaterial(idx3d_Material material)
+		public void loadMaterial(IMaterial material)
 		{
 			color=material.color;
 			transparency=material.transparency;
@@ -162,7 +161,7 @@ public final class idx3d_Rasterizer
 			ready=lightmapLoaded&&materialLoaded;
 		}
 		
-		public void render(idx3d_Triangle tri)
+		public void render(ITriangle tri)
 		{
 			if (!ready) return;
 			if (tri.parent==null) return;
@@ -188,9 +187,9 @@ public final class idx3d_Rasterizer
 			if (mode==F)
 			{
 				lutID=(int)(tri.n2.x*127+127)+((int)(tri.n2.y*127+127)<<8);
-				c=idx3d_Color.multiply(color,diffuse[lutID]);
-				s=idx3d_Color.scale(specular[lutID],reflectivity);
-				currentColor=idx3d_Color.add(c,s);
+				c=IColor.multiply(color,diffuse[lutID]);
+				s=IColor.scale(specular[lutID],reflectivity);
+				currentColor=IColor.add(c,s);
 			}
 			
 			currentId=(tri.parent.id<<16)|tri.id;
@@ -328,26 +327,24 @@ public final class idx3d_Rasterizer
 			}
 		}
 		
-		private void renderLine()
-		{
-			xL=xBase>>16;
-			xR=xMax>>16;
-			z=zBase;
-			nx=nxBase;
-			ny=nyBase;
-			tx=txBase;
-			ty=tyBase;
-			
-			if (xL<0)
-			{
-				z-=xL*dz;
-				nx-=xL*dnx;
-				ny-=xL*dny;
-				tx-=xL*dtx;
-				ty-=xL*dty;
-				xL=0;
+		private void renderLine() {
+			xL = xBase >> 16;
+			xR = xMax >> 16;
+			z = zBase;
+			nx = nxBase;
+			ny = nyBase;
+			tx = txBase;
+			ty = tyBase;
+
+			if (xL < 0) {
+				z -= xL * dz;
+				nx -= xL * dnx;
+				ny -= xL * dny;
+				tx -= xL * dtx;
+				ty -= xL * dty;
+				xL = 0;
 			}
-			xR=(xR<width)?xR:width;
+			xR = (xR < width) ? xR : width;
 			
 //			if (mode==F) renderLineF();                        
 //			else if ((mode&SHADED)==P) renderLineP();
@@ -369,14 +366,14 @@ public final class idx3d_Rasterizer
                             default: break;
                         }
                         
-			offset+=width;
-			xBase+=dxL;
-			xMax+=dxR;
-			zBase+=dzBase;
-			nxBase+=dnxBase;
-			nyBase+=dnyBase;
-			txBase+=dtxBase;
-			tyBase+=dtyBase;	
+						offset += width;
+						xBase += dxL;
+						xMax += dxR;
+						zBase += dzBase;
+						nxBase += dnxBase;
+						nyBase += dnyBase;
+						txBase += dtxBase;
+						tyBase += dtyBase;
 		}
 		
 	// Fast scanline rendering
@@ -389,7 +386,7 @@ public final class idx3d_Rasterizer
 				if (z<zBuffer[pos])
 				{
 					bkgrd=screen.p[pos];
-					c=idx3d_Color.transparency(bkgrd,currentColor,transparency);
+					c=IColor.transparency(bkgrd,currentColor,transparency);
 										
 					screen.p[pos]=0xFF000000|c;
 					zBuffer[pos]=z;
@@ -409,11 +406,11 @@ public final class idx3d_Rasterizer
 				{
 					lutID=((nx>>16)&255)+(((ny>>16)&255)<<8);
 					bkgrd=screen.p[pos];
-					c=idx3d_Color.multiply(color,diffuse[lutID]);
+					c=IColor.multiply(color,diffuse[lutID]);
 					s=specular[lutID];
-					s=idx3d_Color.scale(s,reflectivity);
-					c=idx3d_Color.transparency(bkgrd,c,transparency);
-					c=idx3d_Color.add(c,s);
+					s=IColor.scale(s,reflectivity);
+					c=IColor.transparency(bkgrd,c,transparency);
+					c=IColor.add(c,s);
 										
 					screen.p[pos]=0xFF000000|c;
 					zBuffer[pos]=z;
@@ -426,28 +423,26 @@ public final class idx3d_Rasterizer
 			
 		}
 		
-		private void renderLineE()
-		{
-			for (x=xL;x<xR;x++)
-			{
-				pos=x+offset;
-				if (z<zBuffer[pos])
-				{
-					lutID=((nx>>16)&255)+(((ny>>16)&255)<<8);
-					bkgrd=screen.p[pos];
-					s=idx3d_Color.add(specular[lutID],envmap[lutID]);
-					s=idx3d_Color.scale(s,reflectivity);
-					c=idx3d_Color.transparency(bkgrd,s,transparency);
-										
-					screen.p[pos]=0xFF000000|c;
-					zBuffer[pos]=z;
-					if (useIdBuffer) idBuffer[pos]=currentId;
+		private void renderLineE() {
+			for (x = xL; x < xR; x++) {
+				pos = x + offset;
+				if (z < zBuffer[pos]) {
+					lutID = ((nx >> 16) & 255) + (((ny >> 16) & 255) << 8);
+					bkgrd = screen.p[pos];
+					s = IColor.add(specular[lutID], envmap[lutID]);
+					s = IColor.scale(s, reflectivity);
+					c = IColor.transparency(bkgrd, s, transparency);
+
+					screen.p[pos] = 0xFF000000 | c;
+					zBuffer[pos] = z;
+					if (useIdBuffer)
+						idBuffer[pos] = currentId;
 				}
-				z+=dz;
-				nx+=dnx;
-				ny+=dny;
+				z += dz;
+				nx += dnx;
+				ny += dny;
 			}
-			
+
 		}
 		
 		private void renderLineT()
@@ -459,7 +454,7 @@ public final class idx3d_Rasterizer
 				{
 					bkgrd=screen.p[pos];
 					c=texture.pixel[((tx>>16)&tw)+(((ty>>16)&th)<<tbitW)];
-					c=idx3d_Color.transparency(bkgrd,c,transparency);
+					c=IColor.transparency(bkgrd,c,transparency);
 										
 					screen.p[pos]=0xFF000000|c;
 					zBuffer[pos]=z;
@@ -481,11 +476,11 @@ public final class idx3d_Rasterizer
 				{
 					lutID=((nx>>16)&255)+(((ny>>16)&255)<<8);
 					bkgrd=screen.p[pos];
-					c=idx3d_Color.multiply(color,diffuse[lutID]);
-					s=idx3d_Color.add(specular[lutID],envmap[lutID]);
-					s=idx3d_Color.scale(s,reflectivity);
-					c=idx3d_Color.transparency(bkgrd,c,transparency);
-					c=idx3d_Color.add(c,s);
+					c=IColor.multiply(color,diffuse[lutID]);
+					s=IColor.add(specular[lutID],envmap[lutID]);
+					s=IColor.scale(s,reflectivity);
+					c=IColor.transparency(bkgrd,c,transparency);
+					c=IColor.add(c,s);
 										
 					screen.p[pos]=0xFF000000|c;
 					zBuffer[pos]=z;
@@ -507,11 +502,11 @@ public final class idx3d_Rasterizer
 					lutID=((nx>>16)&255)+(((ny>>16)&255)<<8);
 					bkgrd=screen.p[pos];
 					c=texture.pixel[((tx>>16)&tw)+(((ty>>16)&th)<<tbitW)];
-					c=idx3d_Color.multiply(c,diffuse[lutID]);
+					c=IColor.multiply(c,diffuse[lutID]);
 					s=specular[lutID];
-					s=idx3d_Color.scale(s,reflectivity);
-					c=idx3d_Color.transparency(bkgrd,c,transparency);
-					c=idx3d_Color.add(c,s);
+					s=IColor.scale(s,reflectivity);
+					c=IColor.transparency(bkgrd,c,transparency);
+					c=IColor.add(c,s);
 										
 					screen.p[pos]=0xFF000000|c;
 					zBuffer[pos]=z;
@@ -535,11 +530,11 @@ public final class idx3d_Rasterizer
 					lutID=((nx>>16)&255)+(((ny>>16)&255)<<8);
 					bkgrd=screen.p[pos];
 					c=texture.pixel[((tx>>16)&tw)+(((ty>>16)&th)<<tbitW)];
-					c=idx3d_Color.multiply(c,diffuse[lutID]);
-					s=idx3d_Color.add(specular[lutID],envmap[lutID]);
-					s=idx3d_Color.scale(s,reflectivity);
-					c=idx3d_Color.transparency(bkgrd,c,transparency);
-					c=idx3d_Color.add(c,s);
+					c=IColor.multiply(c,diffuse[lutID]);
+					s=IColor.add(specular[lutID],envmap[lutID]);
+					s=IColor.scale(s,reflectivity);
+					c=IColor.transparency(bkgrd,c,transparency);
+					c=IColor.add(c,s);
 										
 					screen.p[pos]=0xFF000000|c;
 					zBuffer[pos]=z;
@@ -553,7 +548,7 @@ public final class idx3d_Rasterizer
 			}
 		}
 		
-		private void drawWireframe(idx3d_Triangle tri, int defaultcolor)
+		private void drawWireframe(ITriangle tri, int defaultcolor)
 		{
 			drawLine(tri.p1,tri.p2,defaultcolor);
 			drawLine(tri.p2,tri.p3,defaultcolor);
@@ -561,9 +556,9 @@ public final class idx3d_Rasterizer
 		}
 
 	
-		private void drawLine(idx3d_Vertex a, idx3d_Vertex b ,int color)
+		private void drawLine(IVertex a, IVertex b ,int color)
 		{
-			idx3d_Vertex temp;
+			IVertex temp;
 			if ((a.clipcode&b.clipcode)!=0) return;
 
 			dx=(int)Math.abs(a.x-b.x);
@@ -583,7 +578,7 @@ public final class idx3d_Rasterizer
 				for(x=a.x;x<=b.x;x++)
 				{
 					y2=y>>16;
-					if (idx3d_Math.inrange(x,0,width-1)&&idx3d_Math.inrange(y2,0,height-1))
+					if (IMath.inrange(x,0,width-1)&&IMath.inrange(y2,0,height-1))
 					{
 						offset=y2*width;
 						if (z<zBuffer[x+offset])
@@ -620,7 +615,7 @@ public final class idx3d_Rasterizer
 				for(y=a.y;y<=b.y;y++)
 				{
 					x2=x>>16;
-					if (idx3d_Math.inrange(x2,0,width-1)&&idx3d_Math.inrange(y,0,height-1))
+					if (IMath.inrange(x2,0,width-1)&&IMath.inrange(y,0,height-1))
 					{
 						offset=y*width;
 						if (z<zBuffer[x2+offset])

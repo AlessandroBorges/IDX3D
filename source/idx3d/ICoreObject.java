@@ -36,23 +36,87 @@
 
 package idx3d;
 
-public class idx3d_Edge
-// Defines a edge in 3d space
+public abstract class ICoreObject
 {
-	idx3d_Vertex a,b;
-	
-	// C O N S T R U C T O R S
-	
-		private idx3d_Edge()
+	// F I E L D S
+
+	public IMatrix matrix=new IMatrix();
+	public IMatrix normalmatrix=new IMatrix();
+
+	// M A T R I X   O P E R A T I O N S
+
+		public final void transform(IMatrix m)
 		{
+			matrix.transform(m);
+			normalmatrix.transform(m);
 		}
-	
-		public idx3d_Edge(idx3d_Vertex v1, idx3d_Vertex v2)
+
+		public final void shift(float dx, float dy, float dz)
 		{
-			a=v1;
-			b=v2;
+			matrix.shift(dx,dy,dz);
 		}
 		
-		public idx3d_Vertex start() {	return a;	}
-		public idx3d_Vertex end() {return b; }
+		public final void shift(IVector v)
+		{
+			matrix.shift(v.x,v.y,v.z);
+		}
+
+		public final void scale(float d)
+		{
+			matrix.scale(d);
+		}
+
+		public final void scale(float dx, float dy, float dz)
+		{
+			matrix.scale(dx,dy,dz);
+		}
+		
+		public final void scaleSelf(float d)
+		{
+			matrix.scaleSelf(d);
+		}
+
+		public final void scaleSelf(float dx, float dy, float dz)
+		{
+			matrix.scaleSelf(dx,dy,dz);
+		}
+		
+		public final void rotate(IVector d)
+		{
+			rotateSelf(d.x,d.y,d.z);
+		}
+		
+		public final void rotateSelf(IVector d)
+		{
+			rotateSelf(d.x,d.y,d.z);
+		}
+
+		public final void rotate(float dx, float dy, float dz)
+		{
+			matrix.rotate(dx,dy,dz);
+			normalmatrix.rotate(dx,dy,dz);
+		}
+		
+		public final void rotateSelf(float dx, float dy, float dz)
+		{
+			matrix.rotateSelf(dx,dy,dz);
+			normalmatrix.rotateSelf(dx,dy,dz);
+		}
+		
+		public final void setPos(float x, float y, float z)
+		{
+			matrix.m03=x;
+			matrix.m13=y;
+			matrix.m23=z;
+		}
+		
+		public final void setPos(IVector v)
+		{
+			setPos(v.x,v.y,v.z);
+		}
+		
+		public final IVector getPos()
+		{
+			return new IVector(matrix.m03,matrix.m13,matrix.m23);
+		}
 }

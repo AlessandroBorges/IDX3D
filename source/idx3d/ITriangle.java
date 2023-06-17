@@ -40,32 +40,32 @@ package idx3d;
  * Hold Triangle data
  * @author Livia
  */
-public class idx3d_Triangle 
-  implements Comparable<idx3d_Triangle>
+public class ITriangle 
+  implements Comparable<ITriangle>
 // defines a 3d triangle
 {
 	// F I E L D S
 	
-		public idx3d_Object parent;  // the object which obtains this triangle
+		public IObject parent;  // the object which obtains this triangle
 		public boolean visible=true;  //visibility tag for clipping
 		public boolean outOfFrustrum=false;  //visibility tag for frustrum clipping
 
-		public idx3d_Vertex p1;  // first  vertex
-		public idx3d_Vertex p2;  // second vertex 
-		public idx3d_Vertex p3;  // third  vertex 
+		public IVertex p1;  // first  vertex
+		public IVertex p2;  // second vertex 
+		public IVertex p3;  // third  vertex 
 
-		public idx3d_Vector n = new idx3d_Vector() ;  // Normal vector of flat triangle
-		public idx3d_Vector n2 = new idx3d_Vector(); // Projected Normal vector
+		public IVector n = new IVector() ;  // Normal vector of flat triangle
+		public IVector n2 = new IVector(); // Projected Normal vector
 
 		private int minx,maxx,miny,maxy; // for clipping
-		private idx3d_Vector triangleCenter=new idx3d_Vector();
+		private IVector triangleCenter=new IVector();
 		float dist=0;
 		
 		public int id=0;
 
 	// C O N S T R U C T O R S
 
-		public idx3d_Triangle(idx3d_Vertex a, idx3d_Vertex b, idx3d_Vertex c)
+		public ITriangle(IVertex a, IVertex b, IVertex c)
 		{
 			p1=a;
 			p2=b;
@@ -87,11 +87,11 @@ public class idx3d_Triangle
 			triangleCenter.x=(p1.pos2.x+p2.pos2.x+p3.pos2.x);
 			triangleCenter.y=(p1.pos2.y+p2.pos2.y+p3.pos2.y);
 			triangleCenter.z=(p1.pos2.z+p2.pos2.z+p3.pos2.z);
-			visible=idx3d_Vector.angle(triangleCenter,n2)>0;
+			visible=IVector.angle(triangleCenter,n2)>0;
 
 		}
 
-		public void project(idx3d_Matrix normalProjection)
+		public void project(IMatrix normalProjection)
 		{
 			//n2=n.transform(normalProjection);
 			n.transform(normalProjection,n2);
@@ -100,30 +100,30 @@ public class idx3d_Triangle
 		
 		public void regenerateNormal()
 		{
-			n=idx3d_Vector.getNormal(p1.pos,p2.pos,p3.pos);
+			n=IVector.getNormal(p1.pos,p2.pos,p3.pos);
 		}
 		
-		public idx3d_Vector getWeightedNormal()
+		public IVector getWeightedNormal()
 		{
-			return idx3d_Vector.vectorProduct(p1.pos,p2.pos,p3.pos);
+			return IVector.vectorProduct(p1.pos,p2.pos,p3.pos);
 		}
 		
-		public idx3d_Vertex getMedium()
+		public IVertex getMedium()
 		{
 			float cx=(p1.pos.x+p2.pos.x+p3.pos.x)/3;
 			float cy=(p1.pos.y+p2.pos.y+p3.pos.y)/3;
 			float cz=(p1.pos.z+p2.pos.z+p3.pos.z)/3;
 			float cu=(p1.u+p2.u+p3.u)/3;
 			float cv=(p1.v+p2.v+p3.v)/3;
-			return new idx3d_Vertex(cx,cy,cz,cu,cv);
+			return new IVertex(cx,cy,cz,cu,cv);
 		}
 		
-		public idx3d_Vector getCenter()
+		public IVector getCenter()
 		{
 			float cx=(p1.pos.x+p2.pos.x+p3.pos.x)/3;
 			float cy=(p1.pos.y+p2.pos.y+p3.pos.y)/3;
 			float cz=(p1.pos.z+p2.pos.z+p3.pos.z)/3;
-			return new idx3d_Vector(cx,cy,cz);
+			return new IVector(cx,cy,cz);
 		}
 		
 		public float getDist()
@@ -137,9 +137,9 @@ public class idx3d_Triangle
 			return p1.equals(p2)||p2.equals(p3)||p3.equals(p1);
 		}
 		
-		public idx3d_Triangle getClone()
+		public ITriangle getClone()
 		{
-			return new idx3d_Triangle(p1,p2,p3);
+			return new ITriangle(p1,p2,p3);
 		}
 		
 
@@ -147,7 +147,7 @@ public class idx3d_Triangle
 	// P R I V A T E   M E T H O D S
 
     @Override
-    public int compareTo(idx3d_Triangle o) {
+    public int compareTo(ITriangle o) {
        if(this.dist < o.dist) return -1;
        if(this.dist > o.dist) return  1;
        else 

@@ -36,8 +36,7 @@
 
 package idx3d;
 
-public class idx3d_Vector
-// defines a 3d vector
+public class IVector
 {
 	// F I E L D S
 	
@@ -52,11 +51,11 @@ public class idx3d_Vector
 
 	// C O N S T R U C T O R S
 
-		public idx3d_Vector ()
+		public IVector ()
 		{
 		}
 
-		public idx3d_Vector (float xpos, float ypos, float zpos)
+		public IVector (float xpos, float ypos, float zpos)
 		{
 			x=xpos;
 			y=ypos;
@@ -65,7 +64,7 @@ public class idx3d_Vector
 
 	// P U B L I C   M E T H O D S
 
-		public idx3d_Vector normalize()
+		public IVector normalize()
 		// Normalizes the vector
 		{
 			float dist=length();
@@ -77,7 +76,7 @@ public class idx3d_Vector
 			return this;
 		}
 		
-		public idx3d_Vector reverse()
+		public IVector reverse()
 		// Reverses the vector
 		{	
 			x=-x;
@@ -96,16 +95,16 @@ public class idx3d_Vector
      
 		}
 
-    public idx3d_Vector transform(idx3d_Matrix m)
+    public IVector transform(IMatrix m)
     // Modifies the vector by matrix m
     {
         float newx = x * m.m00 + y * m.m01 + z * m.m02 + m.m03;
         float newy = x * m.m10 + y * m.m11 + z * m.m12 + m.m13;
         float newz = x * m.m20 + y * m.m21 + z * m.m22 + m.m23;
-        return new idx3d_Vector(newx, newy, newz);
+        return new IVector(newx, newy, newz);
     }
 
-    public void transform(idx3d_Matrix m, idx3d_Vector vec)
+    public void transform(IMatrix m, IVector vec)
     // Modifies the vector by matrix m
     {
         float dx = x * m.m00 + y * m.m01 + z * m.m02 + m.m03;
@@ -126,35 +125,35 @@ public class idx3d_Vector
 		public void buildCartesian()
 		// Builds the cartesian coordinates out of the given cylindric coordinates
 		{
-			x=r*idx3d_Math.cos(theta);
-			y=r*idx3d_Math.sin(theta);
+			x=r*IMath.cos(theta);
+			y=r*IMath.sin(theta);
 		}
 
-		public static idx3d_Vector getNormal(idx3d_Vector a, idx3d_Vector b)
+		public static IVector getNormal(IVector a, IVector b)
 		// returns the normal vector of the plane defined by the two vectors
 		{
 			return vectorProduct(a,b).normalize();
 		}
 		
-		public static idx3d_Vector getNormal(idx3d_Vector a, idx3d_Vector b, idx3d_Vector c)
+		public static IVector getNormal(IVector a, IVector b, IVector c)
 		// returns the normal vector of the plane defined by the two vectors
 		{
 			return vectorProduct(a,b,c).normalize();
 		}
 		
-		public static idx3d_Vector vectorProduct(idx3d_Vector a, idx3d_Vector b)
+		public static IVector vectorProduct(IVector a, IVector b)
 		// returns a x b
 		{
-			return new idx3d_Vector(a.y*b.z-b.y*a.z,a.z*b.x-b.z*a.x,a.x*b.y-b.x*a.y);
+			return new IVector(a.y*b.z-b.y*a.z,a.z*b.x-b.z*a.x,a.x*b.y-b.x*a.y);
 		}
 		
-		public static idx3d_Vector vectorProduct(idx3d_Vector a, idx3d_Vector b, idx3d_Vector c)
+		public static IVector vectorProduct(IVector a, IVector b, IVector c)
 		// returns (b-a) x (c-a)
 		{
 			return vectorProduct(sub(b,a),sub(c,a));
 		}
 
-		public static float angle(idx3d_Vector a, idx3d_Vector b)
+		public static float angle(IVector a, IVector b)
 		// returns the angle between 2 vectors
 		{
 			a.normalize();
@@ -162,34 +161,34 @@ public class idx3d_Vector
 			return (a.x*b.x+a.y*b.y+a.z*b.z);
 		}
 		
-		public static idx3d_Vector add(idx3d_Vector a, idx3d_Vector b)
+		public static IVector add(IVector a, IVector b)
 		// adds 2 vectors
 		{
-			return new idx3d_Vector(a.x+b.x,a.y+b.y,a.z+b.z);
+			return new IVector(a.x+b.x,a.y+b.y,a.z+b.z);
 		}
 		
-		public static idx3d_Vector sub(idx3d_Vector a, idx3d_Vector b)
+		public static IVector sub(IVector a, IVector b)
 		// substracts 2 vectors
 		{
-			return new idx3d_Vector(a.x-b.x,a.y-b.y,a.z-b.z);
+			return new IVector(a.x-b.x,a.y-b.y,a.z-b.z);
 		}
 		
-		public static idx3d_Vector scale(float f, idx3d_Vector a)
+		public static IVector scale(float f, IVector a)
 		// substracts 2 vectors
 		{
-			return new idx3d_Vector(f*a.x,f*a.y,f*a.z);
+			return new IVector(f*a.x,f*a.y,f*a.z);
 		}
 		
-		public static float len(idx3d_Vector a)
+		public static float len(IVector a)
 		// length of vector
 		{
 			return (float)Math.sqrt(a.x*a.x+a.y*a.y+a.z*a.z);
 		}
 		
-		public static idx3d_Vector random(float fact)
+		public static IVector random(float fact)
 		// returns a random vector
 		{
-			return new idx3d_Vector(fact*idx3d_Math.random(),fact*idx3d_Math.random(),fact*idx3d_Math.random());
+			return new IVector(fact*IMath.random(),fact*IMath.random(),fact*IMath.random());
 		}
 		
 		public String toString()
@@ -197,9 +196,9 @@ public class idx3d_Vector
 			return new String ("<vector x="+x+" y="+y+" z="+z+">\r\n");
 		}
 
-		public idx3d_Vector getClone()
+		public IVector getClone()
 		{
-			return new idx3d_Vector(x,y,z);
+			return new IVector(x,y,z);
 		}
     
     /**

@@ -43,7 +43,7 @@ import idx3d.tests.LUT90;
  * Singleton class for accelerated mathematical operations
  *
  */
-public final class idx3d_Math {
+public final class IMath {
    
     public static float    PI  = (float) Math.PI;
     private static int[]   fastRandoms;
@@ -53,7 +53,7 @@ public final class idx3d_Math {
    
     // A L L O W NO I N S T A N C E S
 
-    private idx3d_Math() {
+    private IMath() {
     }
 
     // T R I G O N O M E T R Y
@@ -93,7 +93,7 @@ public final class idx3d_Math {
     }
 
     // private static void buildTrig() {
-    // System.out.println(">> Building idx3d_Math LUT");
+    // System.out.println(">> Building IMath LUT");
     // sinus = new float[sizeTrig];
     // cosinus = new float[sizeTrig];
     //
