@@ -36,8 +36,7 @@
 
 package idx3d;
 
-public class idx3d_Matrix
-// defines a 3d matrix
+public class IMatrix
 {
 	// M A T R I X   D A T A
 
@@ -49,11 +48,11 @@ public class idx3d_Matrix
 
 	// C O N S T R U C T O R S
 
-		public idx3d_Matrix()
+		public IMatrix()
 		{
 		}
 	
-		public idx3d_Matrix(idx3d_Vector right, idx3d_Vector up, idx3d_Vector forward)
+		public IMatrix(IVector right, IVector up, IVector forward)
 		{
 			m00=right.x;
 			m10=right.y;
@@ -91,48 +90,48 @@ public class idx3d_Matrix
 
 	// F A C T O R Y  M E T H O D S
 
-		public static idx3d_Matrix shiftMatrix(float dx, float dy, float dz)
+		public static IMatrix shiftMatrix(float dx, float dy, float dz)
 		// matrix for shifting
 		{
-			idx3d_Matrix m=new idx3d_Matrix();
+			IMatrix m=new IMatrix();
 			m.m03=dx;
 			m.m13=dy;
 			m.m23=dz;
 			return m;
 		}
 
-		public static idx3d_Matrix scaleMatrix(float dx, float dy, float dz)
+		public static IMatrix scaleMatrix(float dx, float dy, float dz)
 		// matrix for scaling
 		{
-			idx3d_Matrix m=new idx3d_Matrix();
+			IMatrix m=new IMatrix();
 			m.m00=dx;
 			m.m11=dy;
 			m.m22=dz;
 			return m;
 		}
 
-		public static idx3d_Matrix scaleMatrix(float d)
+		public static IMatrix scaleMatrix(float d)
 		// matrix for scaling
 		{
-			return idx3d_Matrix.scaleMatrix(d,d,d);
+			return IMatrix.scaleMatrix(d,d,d);
 		}
     
-    private static idx3d_Matrix tempM = new idx3d_Matrix();    
-    private static idx3d_Matrix tempOUT = new idx3d_Matrix();
+    private static IMatrix tempM = new IMatrix();    
+    private static IMatrix tempOUT = new IMatrix();
     
-		public static idx3d_Matrix rotateMatrix(float dx, float dy, float dz)
+		public static IMatrix rotateMatrix(float dx, float dy, float dz)
 		// matrix for rotation
 		{
-			//idx3d_Matrix out=new idx3d_Matrix();
+			//IMatrix out=new IMatrix();
                         tempOUT.reset();
 			float SIN;
 			float COS;
 
 			if (dx!=0)
 			{
-				//idx3d_Matrix m =new idx3d_Matrix();
-				SIN=idx3d_Math.sin(dx);
-				COS=idx3d_Math.cos(dx);
+				//IMatrix m =new IMatrix();
+				SIN=IMath.sin(dx);
+				COS=IMath.cos(dx);
 				
                                 tempM.reset();
 				tempM.m11=COS;
@@ -143,9 +142,9 @@ public class idx3d_Matrix
 			}
 			if (dy!=0)
 			{
-				//idx3d_Matrix m = new idx3d_Matrix();
-				SIN=idx3d_Math.sin(dy);
-				COS=idx3d_Math.cos(dy);
+				//IMatrix m = new IMatrix();
+				SIN=IMath.sin(dy);
+				COS=IMath.cos(dy);
         
                                 tempM.reset();
 				tempM.m00=COS;
@@ -156,10 +155,10 @@ public class idx3d_Matrix
 			}
 			if (dz!=0)
 			{
-				//idx3d_Matrix m =new idx3d_Matrix();
+				//IMatrix m =new IMatrix();
         
-				SIN=idx3d_Math.sin(dz);
-				COS=idx3d_Math.cos(dz);
+				SIN=IMath.sin(dz);
+				COS=IMath.cos(dz);
         
                                 tempM.reset();
 				tempM.m00=COS;
@@ -209,11 +208,11 @@ public class idx3d_Matrix
 			preTransform(rotateMatrix(dx,dy,dz));
 		}
 
-		public void transform(idx3d_Matrix n)
+		public void transform(IMatrix n)
 		// transforms this matrix by matrix n from left (this=n x this)
 		{
-			//idx3d_Matrix m=this.getClone();
-                 idx3d_Matrix m = this;
+			//IMatrix m=this.getClone();
+                 IMatrix m = this;
       
 		float	mm00 = n.m00*m.m00 + n.m01*m.m10 + n.m02*m.m20;
 		float	mm01 = n.m00*m.m01 + n.m01*m.m11 + n.m02*m.m21;
@@ -237,9 +236,9 @@ public class idx3d_Matrix
    /**
     *  transforms this matrix by matrix n from right (this=this x n)
     */
-   public void preTransform(idx3d_Matrix n){
-	//idx3d_Matrix m = this.getClone();
-        idx3d_Matrix m = this;
+   public void preTransform(IMatrix n){
+	//IMatrix m = this.getClone();
+        IMatrix m = this;
 		float	mm00 = m.m00*n.m00 + m.m01*n.m10 + m.m02*n.m20;
 		float	mm01 = m.m00*n.m01 + m.m01*n.m11 + m.m02*n.m21;
 		float	mm02 = m.m00*n.m02 + m.m01*n.m12 + m.m02*n.m22;
@@ -266,11 +265,11 @@ public class idx3d_Matrix
     * @param mRight - second matriz
     * @param dst -  resulting matriz
     */
-   public static void multiply(idx3d_Matrix mLeft, 
-                               idx3d_Matrix mRight,
-                               idx3d_Matrix dst ) {
+   public static void multiply(IMatrix mLeft, 
+                               IMatrix mRight,
+                               IMatrix dst ) {
      
-	//idx3d_Matrix m=new idx3d_Matrix();
+	//IMatrix m=new IMatrix();
 
 	dst.m00 = mLeft.m00*mRight.m00 + mLeft.m01*mRight.m10 + mLeft.m02*mRight.m20;
 	dst.m01 = mLeft.m00*mRight.m01 + mLeft.m01*mRight.m11 + mLeft.m02*mRight.m21;
@@ -290,13 +289,13 @@ public class idx3d_Matrix
   /**
    *  
    *  returns m1 x m2<br>
-   *  @deprecated - use {@link #multiply(idx3d_Matrix, idx3d_Matrix, idx3d_Matrix)} instead.  
+   *  @deprecated - use {@link #multiply(IMatrix, IMatrix, IMatrix)} instead.  
    */
    @Deprecated
-  public static idx3d_Matrix multiply(idx3d_Matrix m1, idx3d_Matrix m2)
+  public static IMatrix multiply(IMatrix m1, IMatrix m2)
 		// returns m1 x m2
    {
-	idx3d_Matrix m=new idx3d_Matrix();
+	IMatrix m=new IMatrix();
  	m.m00 = m1.m00*m2.m00 + m1.m01*m2.m10 + m1.m02*m2.m20;
 	m.m01 = m1.m00*m2.m01 + m1.m01*m2.m11 + m1.m02*m2.m21;
 	m.m02 = m1.m00*m2.m02 + m1.m01*m2.m12 + m1.m02*m2.m22;
@@ -320,9 +319,9 @@ public class idx3d_Matrix
      * @param m2
      * @return
      */
-    public idx3d_Matrix multiply (idx3d_Matrix m2)
+    public IMatrix multiply (IMatrix m2)
     {
-     idx3d_Matrix m1 = this;
+     IMatrix m1 = this;
       float mm00 = m1.m00*m2.m00 + m1.m01*m2.m10 + m1.m02*m2.m20;
       float mm01 = m1.m00*m2.m01 + m1.m01*m2.m11 + m1.m02*m2.m21;
       float mm02 = m1.m00*m2.m02 + m1.m01*m2.m12 + m1.m02*m2.m22;
@@ -352,8 +351,8 @@ public class idx3d_Matrix
         return out.toString();
     }
 
-    public idx3d_Matrix getClone() {
-        idx3d_Matrix m = new idx3d_Matrix();
+    public IMatrix getClone() {
+        IMatrix m = new IMatrix();
         m.m00 = m00;        m.m01 = m01;        m.m02 = m02;        m.m03 = m03;
         m.m10 = m10;        m.m11 = m11;        m.m12 = m12;        m.m13 = m13;
         m.m20 = m20;        m.m21 = m21;        m.m22 = m22;        m.m23 = m23;
@@ -366,7 +365,7 @@ public class idx3d_Matrix
    * @param dest - matriz to copy to.
    * @return the copied matrix, it is, dest matrix itself.
    */
-    public idx3d_Matrix copyTo(idx3d_Matrix dest){			
+    public IMatrix copyTo(IMatrix dest){			
          if (dest == null) return getClone();
 	  dest.m00=m00;  dest.m01=m01;  dest.m02=m02;  dest.m03=m03;
 	  dest.m10=m10;  dest.m11=m11;  dest.m12=m12;  dest.m13=m13;
@@ -379,9 +378,9 @@ public class idx3d_Matrix
    * Get a copy  of this matrix but inverse.
    * @return a new inverted matrix from   
    */
-    public idx3d_Matrix inverse()
+    public IMatrix inverse()
     {
-     idx3d_Matrix m = new idx3d_Matrix();
+     IMatrix m = new IMatrix();
      return inverse(m);      
     }
 		
@@ -390,7 +389,7 @@ public class idx3d_Matrix
    * @param dest - destination
    * @return dest, with contents os inverse of this 
    */
-    public idx3d_Matrix inverse(idx3d_Matrix dest) {
+    public IMatrix inverse(IMatrix dest) {
 			
 	float q1 = m12;  float q6 = m10*m01;  float q7 = m10*m21;  float q8 = m02;  
 	float q13 = m20*m01;  float q14 = m20*m11;  float q21 = m02*m21;  float q22 = m03*m21; 

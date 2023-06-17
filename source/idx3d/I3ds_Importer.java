@@ -39,36 +39,35 @@ package idx3d;
 import java.io.*;
 import java.net.*;
 
-public class idx3d_3ds_Importer
-// Imports a scene from a 3ds (3d Studio Max) Ressource
+public class I3ds_Importer
 {
 	// F I E L D S
 
 		private int currentJunkId;
 		private int nextJunkOffset;
 
-		private idx3d_Scene scene;
+		private IScene scene;
 		private String currentObjectName=null;
-		private idx3d_Object currentObject=null;
+		private IObject currentObject=null;
 		private boolean endOfStream=false;
 
 
 	// C O N S T R U C T O R S
 
-		public idx3d_3ds_Importer()
+		public I3ds_Importer()
 		{
 		}
 
 
 	// P U B L I C   M E T H O D S
 
-		public void importFromURL(URL url, idx3d_Scene targetscene) throws IOException
+		public void importFromURL(URL url, IScene targetscene) throws IOException
 		{
 			importFromStream(url.openStream(),targetscene);
 		}
 
 
-		public void importFromStream(InputStream inStream, idx3d_Scene targetscene)
+		public void importFromStream(InputStream inStream, IScene targetscene)
 		{
 			System.out.println(">> Importing scene from 3ds stream ...");
 			scene=targetscene;
@@ -129,7 +128,7 @@ public class idx3d_3ds_Importer
 			}
 			if (currentJunkId==0x4100)  // Triangular polygon object
 			{
-				currentObject=new idx3d_Object();
+				currentObject=new IObject();
 				scene.addObject(currentObjectName,currentObject);
 				return;
 			}

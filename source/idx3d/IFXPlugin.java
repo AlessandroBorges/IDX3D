@@ -36,72 +36,25 @@
 
 package idx3d;
 
-public class idx3d_Light extends idx3d_CoreObject
-// defines a light in the scene
+public abstract class IFXPlugin
 {
 	// F I E L D S
 
-		public idx3d_Vector v;               //Light direction
-		public idx3d_Vector v2;             //projected Light direction
-		public int diffuse=0;
-		public int specular=0;
-		public int highlightSheen=0;
-		public int highlightSpread=0;
+		public  IScene scene=null;
+		public IScreen screen=null;
+
+
+	// C O N S T R U C T O R    M E T H O D S
 	
-		idx3d_Matrix matrix2;
-
-
-	// C O N S T R U C T O R S
-	
-		private idx3d_Light()
-		// Default constructor not accessible
+		public IFXPlugin(IScene scene)
 		{
-		}		
-
-		public idx3d_Light(idx3d_Vector direction)
-		{
-			v=direction.getClone();
-			v.normalize();
-		}
-
-		public idx3d_Light(idx3d_Vector direction,int diffuse)
-		{
-			v=direction.getClone();
-			v.normalize();
-			this.diffuse=diffuse;
+			this.scene=scene;
+			screen=scene.renderPipeline.screen;
 		}
 		
-		public idx3d_Light(idx3d_Vector direction, int color, int highlightSheen, int highlightSpread)
-		{
-			v=direction.getClone();
-			v.normalize();
-			this.diffuse=color;
-			this.specular=color;
-			this.highlightSheen=highlightSheen;
-			this.highlightSpread=highlightSpread;
-		}
-		
-		public idx3d_Light(idx3d_Vector direction, int diffuse, int specular, int highlightSheen, int highlightSpread)
-		{
-			v=direction.getClone();
-			v.normalize();
-			this.diffuse=diffuse;
-			this.specular=specular;
-			this.highlightSheen=highlightSheen;
-			this.highlightSpread=highlightSpread;
-		}
+	// A B S T R A C T   M E T H O D S
+	
+		public abstract void apply();
+		// Applys the effect on the scene / screen
 
-
-	// P U B L I C   M E T H O D S
-
-    public void project(idx3d_Matrix m) {        
-        // matrix2=matrix.getClone();
-        // v2=v.transform(matrix2);
-        if (matrix2 == null) 
-            matrix2 = new idx3d_Matrix();
-       
-        matrix.copyTo(matrix2);
-        matrix2.transform(m);        
-        v.transform(matrix2, v2);
-    }
 }

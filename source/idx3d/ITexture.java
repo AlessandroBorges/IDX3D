@@ -42,8 +42,7 @@ import java.awt.Toolkit;
 import java.awt.image.PixelGrabber;
 import java.net.URL;
 
-public class idx3d_Texture
-// defines a texture
+public class ITexture
 {
 	// F I E L D S
 
@@ -53,54 +52,55 @@ public class idx3d_Texture
 		public int bitHeight;
 		public int pixel[];
 		
-		public String path=null;
+		public String textureName=null;
 
 	// C O N S T R U C T O R S
 
-		public idx3d_Texture(int w, int h)
-		{
-			height=h;
-			width=w;
-			pixel=new int[w*h];
-			cls();
-		}
+	public ITexture(int w, int h) {
+		height = h;
+		width = w;
+		pixel = new int[w * h];
+		cls();
+	}
 
-		public idx3d_Texture(int w, int h, int data[])
-		{
-			height=h;
-			width=w;
-			pixel=new int[width*height];
-			//System.arraycopy(data,0,pixel,0,width*height);
-		}
+	public ITexture(int w, int h, int data[]) {
+		height = h;
+		width = w;
+		pixel = new int[width * height];
+		// System.arraycopy(data,0,pixel,0,width*height);
+	}
 
-		public idx3d_Texture(Image img)
-		{
-			loadTexture(img);
-		}
+	public ITexture(Image img) {
+		loadTexture(img);
+	}
 
-		public idx3d_Texture(URL docURL, String filename)
-		// Call from Applet
-		{			
-			int pos=0;
-			String temp=docURL.toString();
-			while (temp.indexOf("/",pos)>0) pos=temp.indexOf("/",pos)+1;
-			temp=temp.substring(0,pos)+filename;
-			while (temp.indexOf("/",pos)>0) pos=temp.indexOf("/",pos)+1;
-			String file=temp.substring(pos);
-			String base=temp.substring(0,pos);
-			
-			try{
-				loadTexture(Toolkit.getDefaultToolkit().getImage(new URL(base+file)));
-			}
-			catch (Exception e){System.err.println(e+"");}
+	/**
+	 * Load texture
+	 * @param docURL
+	 * @param filename
+	 */
+	public ITexture(URL docURL, String filename){
+		int pos = 0;
+		String temp = docURL.toString();
+		while (temp.indexOf("/", pos) > 0)
+			pos = temp.indexOf("/", pos) + 1;
+		temp = temp.substring(0, pos) + filename;
+		while (temp.indexOf("/", pos) > 0)
+			pos = temp.indexOf("/", pos) + 1;
+		String file = temp.substring(pos);
+		String base = temp.substring(0, pos);
+        textureName = file;
+		try {
+			loadTexture(Toolkit.getDefaultToolkit().getImage(new URL(base + file)));
+		} catch (Exception e) {
+			System.err.println(e + "");
 		}
+	}
 
-		public idx3d_Texture(String filename)
-		{
-			path=new java.io.File(filename).getName();
-			loadTexture(Toolkit.getDefaultToolkit().getImage(filename));
-		}
-		
+	public ITexture(String filename) {
+		textureName = new java.io.File(filename).getName();
+		loadTexture(Toolkit.getDefaultToolkit().getImage(filename));
+	}
 
 	// P U B L I C   M E T H O D S
 
@@ -117,50 +117,50 @@ public class idx3d_Texture
 			setSize(w,h);
 		}
 
-		public idx3d_Texture put(idx3d_Texture newData)
+		public ITexture put(ITexture newData)
 		// assigns new data for the texture
 		{
 			System.arraycopy(newData.pixel,0,pixel,0,width*height);
 			return this;
 		}
 
-		public idx3d_Texture mix(idx3d_Texture newData)
+		public ITexture mix(ITexture newData)
 		// mixes the texture with another one
 		{
 			for (int i=width*height-1;i>=0;i--)
-				pixel[i]=idx3d_Color.mix(pixel[i],newData.pixel[i]);
+				pixel[i]=IColor.mix(pixel[i],newData.pixel[i]);
 			return this;
 		}
 
-		public idx3d_Texture add(idx3d_Texture additive)
+		public ITexture add(ITexture additive)
 		// additive blends another texture with this
 		{
 			for (int i=width*height-1;i>=0;i--)
-				pixel[i]=idx3d_Color.add(pixel[i],additive.pixel[i]);
+				pixel[i]=IColor.add(pixel[i],additive.pixel[i]);
 			return this;
 		}
 
-		public idx3d_Texture sub(idx3d_Texture subtractive)
+		public ITexture sub(ITexture subtractive)
 		// subtractive blends another texture with this
 		{
 			for (int i=width*height-1;i>=0;i--)
-				pixel[i]=idx3d_Color.sub(pixel[i],subtractive.pixel[i]);
+				pixel[i]=IColor.sub(pixel[i],subtractive.pixel[i]);
 			return this;
 		}
 
-		public idx3d_Texture inv()
+		public ITexture inv()
 		// inverts the texture
 		{
 			for (int i=width*height-1;i>=0;i--)
-				pixel[i]=idx3d_Color.inv(pixel[i]);
+				pixel[i]=IColor.inv(pixel[i]);
 			return this;
 		}
 		
-		public idx3d_Texture multiply(idx3d_Texture multiplicative)
+		public ITexture multiply(ITexture multiplicative)
 		// inverts the texture
 		{
 			for (int i=width*height-1;i>=0;i--)
-				pixel[i]=idx3d_Color.multiply(pixel[i],multiplicative.pixel[i]);
+				pixel[i]=IColor.multiply(pixel[i],multiplicative.pixel[i]);
 			return this;
 		}
 
@@ -168,49 +168,49 @@ public class idx3d_Texture
 		public void cls()
 		// clears the texture
 		{
-			idx3d_Math.clearBuffer(pixel,0);
+			IMath.clearBuffer(pixel,0);
 		}
 
-		public idx3d_Texture toAverage()
+		public ITexture toAverage()
 		// builds the averidge of the channels
 		{
 			for (int i=width*height-1;i>=0;i--) 
-				pixel[i]=idx3d_Color.getAverage(pixel[i]);
+				pixel[i]=IColor.getAverage(pixel[i]);
 			return this;
 		}
 
-		public idx3d_Texture toGray()
+		public ITexture toGray()
 		// converts this texture to gray
 		{
 			for (int i=width*height-1;i>=0;i--) 
-				pixel[i]=idx3d_Color.getGray(pixel[i]);
+				pixel[i]=IColor.getGray(pixel[i]);
 			return this;
 		}
 		
-		public idx3d_Texture valToGray()
+		public ITexture valToGray()
 		{
 			int intensity;
 			for (int i=width*height-1;i>=0;i--)
 			{
-				intensity=idx3d_Math.crop(pixel[i],0,255);
-				pixel[i]=idx3d_Color.getColor(intensity,intensity,intensity);
+				intensity=IMath.crop(pixel[i],0,255);
+				pixel[i]=IColor.getColor(intensity,intensity,intensity);
 			}
 			
 			return this;
 		}
 		
-		public idx3d_Texture colorize(int[] pal)
+		public ITexture colorize(int[] pal)
 		{
 			int range=pal.length-1;
 			for (int i=width*height-1;i>=0;i--)
-				pixel[i]=pal[idx3d_Math.crop(pixel[i],0,range)];
+				pixel[i]=pal[IMath.crop(pixel[i],0,range)];
 			return this;
 		}
 		
-		public static idx3d_Texture blendTopDown(idx3d_Texture top, idx3d_Texture down)
+		public static ITexture blendTopDown(ITexture top, ITexture down)
 		{
 			down.resize(top.width,top.height);
-			idx3d_Texture t=new idx3d_Texture(top.width,top.height);
+			ITexture t=new ITexture(top.width,top.height);
 			int pos=0;
 			int alpha;
 			for (int y=0;y<top.height;y++)
@@ -218,59 +218,71 @@ public class idx3d_Texture
 				alpha=255*y/(top.height-1);
 				for (int x=0;x<top.width;x++)
 				{
-					t.pixel[pos]=idx3d_Color.transparency(down.pixel[pos],top.pixel[pos],alpha);
+					t.pixel[pos]=IColor.transparency(down.pixel[pos],top.pixel[pos],alpha);
 					pos++;
 				}
 			}
 			return t;
 		}		
 
-	// P R I V A T E   M E T H O D S
-
-
-		private void loadTexture(Image img)
-		// grabbs the pixels out of an image
-		{
-			try
-			{
-				while (((width=img.getWidth(null))<0)||((height=img.getHeight(null))<0));
-
-				pixel=new int[width*height];
-				PixelGrabber pg=new PixelGrabber(img,0,0,width,height,pixel,0,width);
-				pg.grabPixels();
-			}
-			catch (InterruptedException e) {}
-		}
-
-		private void setSize(int w, int h)
-		// resizes the texture
-		{
-			int offset=w*h;
-			int offset2;
-			if (w*h!=0)
-			{
-				int newpixels[]=new int[w*h];
-				for(int j=h-1;j>=0;j--)
-				{
-					offset-=w;
-					offset2=(j*height/h)*width;
-					for (int i=w-1;i>=0;i--)
-						newpixels[i+offset]=pixel[(i*width/w)+offset2];
-				}
-				width=w; height=h; pixel=newpixels;
-			}
-		}
-
-		private boolean inrange(int a, int b, int c)
-		{
-			return (a>=b)&(a<c);
-		}
 		
-		public idx3d_Texture getClone()
-		{
-			idx3d_Texture t=new idx3d_Texture(width,height);
-			idx3d_Math.copyBuffer(pixel,t.pixel);
-			return t;
+		
+		
+	
+
+	@Override
+		public String toString() {
+			return "ITexture [" + (textureName != null ? "textureName=" + textureName + ", " : "") + "width=" + width
+					+ ", height=" + height + "]";
 		}
+
+	/**
+	 * grabs the pixels out of an image
+	 * 
+	 * @param img the image
+	 */
+	private void loadTexture(Image img) {
+		try {
+			while (((width = img.getWidth(null)) < 0) || ((height = img.getHeight(null)) < 0))
+				;
+			pixel = new int[width * height];
+			PixelGrabber pg = new PixelGrabber(img, 0, 0, width, height, pixel, 0, width);
+			pg.grabPixels();
+		} catch (InterruptedException e) {
+		}
+	}
+
+	/**
+	 * resizes the texture
+	 * @param w
+	 * @param h
+	 */
+	private void setSize(int w, int h)	
+	{
+		int offset = w * h;
+		int offset2;
+		if (w * h != 0) {
+			int newpixels[] = new int[w * h];
+			for (int j = h - 1; j >= 0; j--) {
+				offset -= w;
+				offset2 = (j * height / h) * width;
+				for (int i = w - 1; i >= 0; i--)
+					newpixels[i + offset] = pixel[(i * width / w) + offset2];
+			}
+			width = w;
+			height = h;
+			pixel = newpixels;
+		}
+	}
+
+	private boolean inrange(int a, int b, int c) {
+		return (a >= b) & (a < c);
+	}
+
+	public ITexture getClone() {
+		ITexture t = new ITexture(width, height);
+		IMath.copyBuffer(pixel, t.pixel);
+		return t;
+	}
 		
 }

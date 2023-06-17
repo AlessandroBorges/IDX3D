@@ -46,7 +46,7 @@ import java.awt.image.ColorModel;
 import java.awt.image.DirectColorModel;
 import java.awt.image.ImageProducer;
 
-public class idx3d_Screen // defines a virtual screen which is a server for rendered images
+public class IScreen
 {
     // F I E L D S
 
@@ -58,7 +58,7 @@ public class idx3d_Screen // defines a virtual screen which is a server for rend
     int w, h; // dimensions before antialiasing
 
     private Image image;
-    private idx3d_ImageProducer producer;    
+    private IImageProducer producer;    
     private ColorModel cm;// = new DirectColorModel(32, 0xFF0000, 0xFF00, 0xFF);
     boolean antialias = false;
     /**
@@ -70,13 +70,13 @@ public class idx3d_Screen // defines a virtual screen which is a server for rend
     // BENCHMARK STUFF
     private long timestamp = 0;
     private long time = 0;
-    public static final int sampleLength = 64;
+    public static final int sampleLength = 120;
     private int probes = sampleLength;
     
     float FPS = 0;
 
 	// C O N S T R U C T O R S
-    public idx3d_Screen(int w, int h) {
+    public IScreen(int w, int h) {
         width = w;
         height = h;
         this.w = width;
@@ -84,7 +84,7 @@ public class idx3d_Screen // defines a virtual screen which is a server for rend
         pixel = new int[w * h];
         p = pixel;
         cm = useNativeColorModel ? getCompatibleColorModel() : new DirectColorModel(32, 0xFF0000, 0xFF00, 0xFF);        
-        producer = new idx3d_ImageProducer(width, height, cm, pixel);
+        producer = new IImageProducer(width, height, cm, pixel);
         image = Toolkit.getDefaultToolkit().createImage(producer);
         
         
@@ -177,12 +177,12 @@ public class idx3d_Screen // defines a virtual screen which is a server for rend
         }
     }
 
-    public idx3d_Texture asTexture() {
-        return new idx3d_Texture(width, height, pixel);
+    public ITexture asTexture() {
+        return new ITexture(width, height, pixel);
     }
 
     public final void clear(int bgcolor) {
-        idx3d_Math.clearBuffer(p, bgcolor);
+        IMath.clearBuffer(p, bgcolor);
     }
 
     public void resize(int width, int height) {
@@ -200,7 +200,7 @@ public class idx3d_Screen // defines a virtual screen which is a server for rend
             pixel = new int[width * height];
             p = pixel;
         }
-        producer =  new idx3d_ImageProducer(width, height, cm, pixel);
+        producer =  new IImageProducer(width, height, cm, pixel);
         image = Toolkit.getDefaultToolkit().createImage(producer);
     }
 
@@ -235,20 +235,20 @@ public class idx3d_Screen // defines a virtual screen which is a server for rend
     }
 
 	// IMAGE OVERLAYING
-    public void draw(idx3d_Texture texture, int posx, int posy, int xsize, int ysize) {
+    public void draw(ITexture texture, int posx, int posy, int xsize, int ysize) {
         draw(pixel, width, height, texture, posx, posy, xsize, ysize);
     }
 
-    public void add(idx3d_Texture texture, int posx, int posy, int xsize, int ysize) {
+    public void add(ITexture texture, int posx, int posy, int xsize, int ysize) {
         add(pixel, width, height, texture, posx, posy, xsize, ysize);
     }
 
-    public void drawBackground(idx3d_Texture texture, int posx, int posy, int xsize, int ysize) {
+    public void drawBackground(ITexture texture, int posx, int posy, int xsize, int ysize) {
         draw(p, w, h, texture, posx, posy, xsize, ysize);
     }
 
 	// Private part of image overlaying
-    private void draw(int[] buffer, int width, int height, idx3d_Texture texture, int posx, int posy, int xsize, int ysize) {
+    private void draw(int[] buffer, int width, int height, ITexture texture, int posx, int posy, int xsize, int ysize) {
         if (texture == null) {
             return;
         }
@@ -261,13 +261,13 @@ public class idx3d_Screen // defines a virtual screen which is a server for rend
         int tw = texture.width;
         int dtx = tx / w;
         int dty = ty / h;
-        int txBase = idx3d_Math.crop(-xBase * dtx, 0, 255 * tx);
-        int tyBase = idx3d_Math.crop(-yBase * dty, 0, 255 * ty);
-        int xend = idx3d_Math.crop(xBase + w, 0, width);
-        int yend = idx3d_Math.crop(yBase + h, 0, height);
+        int txBase = IMath.crop(-xBase * dtx, 0, 255 * tx);
+        int tyBase = IMath.crop(-yBase * dty, 0, 255 * ty);
+        int xend = IMath.crop(xBase + w, 0, width);
+        int yend = IMath.crop(yBase + h, 0, height);
         int pos, offset1, offset2;
-        xBase = idx3d_Math.crop(xBase, 0, width);
-        yBase = idx3d_Math.crop(yBase, 0, height);
+        xBase = IMath.crop(xBase, 0, width);
+        yBase = IMath.crop(yBase, 0, height);
 
         ty = tyBase;
         for (int j = yBase; j < yend; j++) {
@@ -282,7 +282,7 @@ public class idx3d_Screen // defines a virtual screen which is a server for rend
         }
     }
 
-    private void add(int[] buffer, int width, int height, idx3d_Texture texture, int posx, int posy, int xsize, int ysize) {
+    private void add(int[] buffer, int width, int height, ITexture texture, int posx, int posy, int xsize, int ysize) {
         int w = xsize;
         int h = ysize;
         int xBase = posx;
@@ -292,13 +292,13 @@ public class idx3d_Screen // defines a virtual screen which is a server for rend
         int tw = texture.width;
         int dtx = tx / w;
         int dty = ty / h;
-        int txBase = idx3d_Math.crop(-xBase * dtx, 0, 255 * tx);
-        int tyBase = idx3d_Math.crop(-yBase * dty, 0, 255 * ty);
-        int xend = idx3d_Math.crop(xBase + w, 0, width);
-        int yend = idx3d_Math.crop(yBase + h, 0, height);
+        int txBase = IMath.crop(-xBase * dtx, 0, 255 * tx);
+        int tyBase = IMath.crop(-yBase * dty, 0, 255 * ty);
+        int xend = IMath.crop(xBase + w, 0, width);
+        int yend = IMath.crop(yBase + h, 0, height);
         int pos, offset1, offset2;
-        xBase = idx3d_Math.crop(xBase, 0, width);
-        yBase = idx3d_Math.crop(yBase, 0, height);
+        xBase = IMath.crop(xBase, 0, width);
+        yBase = IMath.crop(yBase, 0, height);
 
         ty = tyBase;
         for (int j = yBase; j < yend; j++) {
@@ -306,7 +306,7 @@ public class idx3d_Screen // defines a virtual screen which is a server for rend
             offset1 = j * width;
             offset2 = (ty >> 8) * tw;
             for (int i = xBase; i < xend; i++) {
-                buffer[i + offset1] = idx3d_Color.add(texture.pixel[(tx >> 8) + offset2], pixel[i + offset1]);
+                buffer[i + offset1] = IColor.add(texture.pixel[(tx >> 8) + offset2], pixel[i + offset1]);
                 tx += dtx;
             }
             ty += dty;

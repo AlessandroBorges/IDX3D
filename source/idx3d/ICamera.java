@@ -36,18 +36,18 @@
 
 package idx3d;
 
-public class idx3d_Camera
+public class ICamera
 {
 	// F I E L D S
 
-		public idx3d_Matrix matrix=new idx3d_Matrix();
-		public idx3d_Matrix normalmatrix=new idx3d_Matrix();
+		public IMatrix matrix=new IMatrix();
+		public IMatrix normalmatrix=new IMatrix();
 
 		boolean needsRebuild=true;   // Flag indicating changes on matrix
 
 		// Camera settings
-		public idx3d_Vector pos=new idx3d_Vector(0f,0f,0f);
-		public idx3d_Vector lookat=new idx3d_Vector(0f,0f,0f);
+		public IVector pos=new IVector(0f,0f,0f);
+		public IVector lookat=new IVector(0f,0f,0f);
 		public float roll=0f;
 
 		float fovfact;             // Field of View factor
@@ -57,25 +57,25 @@ public class idx3d_Camera
 
 	// C O N S T R U C T O R S
 
-		public idx3d_Camera()
+		public ICamera()
 		{
 			setFov(90f);
 		}
 
-		public idx3d_Camera(float fov)
+		public ICamera(float fov)
 		{
 			setFov(fov);
 		}
 
 	// P U B L I C   M E T H O D S
 
-		idx3d_Matrix getMatrix()
+		IMatrix getMatrix()
 		{
 			rebuildMatrices();
 			return matrix;
 		}
 
-		idx3d_Matrix getNormalMatrix()
+		IMatrix getNormalMatrix()
 		{
 			rebuildMatrices();
 			return normalmatrix;
@@ -86,23 +86,23 @@ public class idx3d_Camera
 			if (!needsRebuild) return;
 			needsRebuild=false;
 
-			idx3d_Vector forward,up,right;
+			IVector forward,up,right;
 
-			forward=idx3d_Vector.sub(lookat,pos);
-			up=new idx3d_Vector(0f,1f,0f);
-			right=idx3d_Vector.getNormal(up,forward);
-			up=idx3d_Vector.getNormal(forward,right);
+			forward=IVector.sub(lookat,pos);
+			up=new IVector(0f,1f,0f);
+			right=IVector.getNormal(up,forward);
+			up=IVector.getNormal(forward,right);
 
 			forward.normalize();
 			up.normalize();
 			right.normalize();
 
-			normalmatrix=new idx3d_Matrix(right,up,forward);
+			normalmatrix=new IMatrix(right,up,forward);
 			normalmatrix.rotate(0,0,roll);
 			//matrix=normalmatrix.getClone();
     if (matrix == null)
     {
-      matrix = new  idx3d_Matrix();
+      matrix = new  IMatrix();
     }
       normalmatrix.copyTo(matrix);
 			matrix.shift(pos.x,pos.y,pos.z);
@@ -115,7 +115,7 @@ public class idx3d_Camera
 
 		public void setFov(float fov)
 		{
-			fovfact=(float)Math.tan(idx3d_Math.deg2rad(fov)/2);
+			fovfact=(float)Math.tan(IMath.deg2rad(fov)/2);
 		}
 
 		public void roll(float angle)
@@ -126,11 +126,11 @@ public class idx3d_Camera
 
 		public void setPos(float px, float py, float pz)
 		{
-			pos=new idx3d_Vector(px,py,pz);
+			pos=new IVector(px,py,pz);
 			needsRebuild=true;
 		}
 
-		public void setPos(idx3d_Vector p)
+		public void setPos(IVector p)
 		{
 			pos=p;
 			needsRebuild=true;
@@ -138,11 +138,11 @@ public class idx3d_Camera
 
 		public void lookAt(float px, float py, float pz)
 		{
-			lookat=new idx3d_Vector(px,py,pz);
+			lookat=new IVector(px,py,pz);
 			needsRebuild=true;
 		}
 
-		public void lookAt(idx3d_Vector p)
+		public void lookAt(IVector p)
 		{
 			lookat=p;
 			needsRebuild=true;
@@ -159,16 +159,16 @@ public class idx3d_Camera
 
 		public final void shift(float dx, float dy, float dz)
 		{
-			//pos = pos.transform(idx3d_Matrix.shiftMatrix(dx,dy,dz));
-			pos.transform(idx3d_Matrix.shiftMatrix(dx,dy,dz),pos);
+			//pos = pos.transform(IMatrix.shiftMatrix(dx,dy,dz));
+			pos.transform(IMatrix.shiftMatrix(dx,dy,dz),pos);
 
-			//lookat=lookat.transform(idx3d_Matrix.shiftMatrix(dx,dy,dz));
-			lookat.transform(idx3d_Matrix.shiftMatrix(dx,dy,dz),lookat);
+			//lookat=lookat.transform(IMatrix.shiftMatrix(dx,dy,dz));
+			lookat.transform(IMatrix.shiftMatrix(dx,dy,dz),lookat);
 			needsRebuild=true;
 
 		}
 
-		public final void shift(idx3d_Vector v)
+		public final void shift(IVector v)
 		{
 			shift(v.x,v.y,v.z);
 
@@ -176,40 +176,40 @@ public class idx3d_Camera
 
 		public final void rotate(float dx, float dy, float dz)
 		{
-			//pos=pos.transform(idx3d_Matrix.rotateMatrix(dx,dy,dz));
-			pos.transform(idx3d_Matrix.rotateMatrix(dx,dy,dz),pos);
+			//pos=pos.transform(IMatrix.rotateMatrix(dx,dy,dz));
+			pos.transform(IMatrix.rotateMatrix(dx,dy,dz),pos);
 			needsRebuild=true;
 		}
 
-		public final void rotate(idx3d_Vector v)
+		public final void rotate(IVector v)
 		{
 			rotate(v.x,v.y,v.z);
 		}
 
-		public static idx3d_Camera FRONT()
+		public static ICamera FRONT()
 		{
-			idx3d_Camera cam=new idx3d_Camera();
+			ICamera cam=new ICamera();
 			cam.setPos(0,0,-2f);
 			return cam;
 		}
 
-		public static idx3d_Camera LEFT()
+		public static ICamera LEFT()
 		{
-			idx3d_Camera cam=new idx3d_Camera();
+			ICamera cam=new ICamera();
 			cam.setPos(2f,0,0);
 			return cam;
 		}
 
-		public static idx3d_Camera RIGHT()
+		public static ICamera RIGHT()
 		{
-			idx3d_Camera cam=new idx3d_Camera();
+			ICamera cam=new ICamera();
 			cam.setPos(-2f,0,0);
 			return cam;
 		}
 
-		public static idx3d_Camera TOP()
+		public static ICamera TOP()
 		{
-			idx3d_Camera cam=new idx3d_Camera();
+			ICamera cam=new ICamera();
 			cam.setPos(0,-2f,0);
 			return cam;
 		}

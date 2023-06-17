@@ -41,17 +41,16 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
-public class idx3d_Vertex
-// defines a triangle vertex
+public class IVertex
 {
 	// F I E L D S
 		
-		public idx3d_Object parent;
+		public IObject parent;
 		
-		public idx3d_Vector pos=new idx3d_Vector();   //(x,y,z) Coordinate of vertex
-		public idx3d_Vector pos2 = new idx3d_Vector();  //Transformed vertex coordinate
-		public idx3d_Vector n=new idx3d_Vector();   //Normal Vector at vertex
-		public idx3d_Vector n2 = new idx3d_Vector();  //Transformed normal vector (camera space)
+		public IVector pos=new IVector();   //(x,y,z) Coordinate of vertex
+		public IVector pos2 = new IVector();  //Transformed vertex coordinate
+		public IVector n=new IVector();   //Normal Vector at vertex
+		public IVector n2 = new IVector();  //Transformed normal vector (camera space)
 
 		public int x;  //Projected x coordinate
 		public int y;  //Projected y coordinate
@@ -71,34 +70,34 @@ public class idx3d_Vertex
 		public int id; // Vertex index
 		
 		private float fact;
-		private List<idx3d_Triangle> neighbor=new ArrayList<idx3d_Triangle>(); //Neighbor triangles of vertex
+		private List<ITriangle> neighbor=new ArrayList<ITriangle>(); //Neighbor triangles of vertex
 
 
 	// C O N S T R U C T O R S
 
-		public idx3d_Vertex()
+		public IVertex()
 		{
-			pos=new idx3d_Vector(0f,0f,0f);
+			pos=new IVector(0f,0f,0f);
 		}
 
-		public idx3d_Vertex(float xpos, float ypos, float zpos)
+		public IVertex(float xpos, float ypos, float zpos)
 		{
-			pos=new idx3d_Vector(xpos,ypos,zpos);
+			pos=new IVector(xpos,ypos,zpos);
 		}
 		
-		public idx3d_Vertex(float xpos, float ypos, float zpos, float u, float v)
+		public IVertex(float xpos, float ypos, float zpos, float u, float v)
 		{
-			pos=new idx3d_Vector(xpos,ypos,zpos);
+			pos=new IVector(xpos,ypos,zpos);
 			this.u=u;
 			this.v=v;
 		}
 
-		public idx3d_Vertex(idx3d_Vector ppos)
+		public IVertex(IVector ppos)
 		{
 			pos=ppos.getClone();
 		}
 		
-		public idx3d_Vertex(idx3d_Vector ppos, float u, float v)
+		public IVertex(IVector ppos, float u, float v)
 		{
 			pos=ppos.getClone();
 			this.u=u;
@@ -107,7 +106,7 @@ public class idx3d_Vertex
 
 	// P U B L I C   M E T H O D S
 
-		void project(idx3d_Matrix vertexProjection,idx3d_Matrix normalProjection, idx3d_Camera camera)
+		void project(IMatrix vertexProjection,IMatrix normalProjection, ICamera camera)
 		// Projects this vertex into camera space
 		{
 			
@@ -147,7 +146,7 @@ public class idx3d_Vertex
 			visible=(clipcode==0);
 		}
 
-		void registerNeighbor(idx3d_Triangle triangle)
+		void registerNeighbor(ITriangle triangle)
 		// registers a neighbor triangle
 		{
 			if (!neighbor.contains(triangle)) neighbor.add(triangle);
@@ -166,8 +165,8 @@ public class idx3d_Vertex
 			float ny=0;
 			float nz=0;			
 			int sz = neighbor.size();
-			idx3d_Triangle tri;
-			idx3d_Vector wn;
+			ITriangle tri;
+			IVector wn;
 			for (int i=0; i<sz; i++)
 			{
 				tri= neighbor.get(i);// enume.nextElement();
@@ -176,7 +175,7 @@ public class idx3d_Vertex
 				ny+=wn.y;
 				nz+=wn.z;
 			}
-			n=new idx3d_Vector(nx,ny,nz).normalize();
+			n=new IVector(nx,ny,nz).normalize();
 		}
 		
 		public void scaleTextureCoordinates(float fx, float fy)
@@ -185,9 +184,9 @@ public class idx3d_Vertex
 			v*=fy;
 		}
 			
-		public idx3d_Vertex getClone()
+		public IVertex getClone()
 		{
-			idx3d_Vertex newVertex=new idx3d_Vertex();
+			IVertex newVertex=new IVertex();
 			newVertex.pos=pos.getClone();
 			newVertex.n=n.getClone();
 			newVertex.u=u;
@@ -200,14 +199,14 @@ public class idx3d_Vertex
 			return new String("<vertex  x="+pos.x+" y="+pos.y+" z="+pos.z+" u="+u+" v="+v+">\r\n");
 		}
 		
-		public boolean equals(idx3d_Vertex v)
+		public boolean equals(IVertex v)
 		{
 			return ((pos.x==v.pos.x)&&(pos.y==v.pos.y)&&(pos.z==v.pos.z));
 		}
 		
-		public boolean equals(idx3d_Vertex v,float tolerance)
+		public boolean equals(IVertex v,float tolerance)
 		{
-			return Math.abs(idx3d_Vector.sub(pos,v.pos).length())<tolerance;
+			return Math.abs(IVector.sub(pos,v.pos).length())<tolerance;
 		}
 		
 

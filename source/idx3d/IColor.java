@@ -36,8 +36,7 @@
 
 package idx3d;
 
-public final class idx3d_Color
-// Faster Color handling for 24bit colors
+public final class IColor
 {
 	public static final int ALPHA=0xFF000000; // alpha mask
 	public static final int RED=0xFF0000;  // red mask
@@ -49,7 +48,7 @@ public final class idx3d_Color
 	
 	private static int pixel,color,overflow,scale,r,g,b;
 
-	private idx3d_Color()
+	private IColor()
 	//Allow no instances
 	{
 	}
@@ -98,7 +97,7 @@ public final class idx3d_Color
 	
 		public final static int getCropColor(int r, int g, int b)
 		{
-			return ALPHA|(idx3d_Math.crop(r,0,255)<<16)|(idx3d_Math.crop(g,0,255)<<8)|idx3d_Math.crop(b,0,255);
+			return ALPHA|(IMath.crop(r,0,255)<<16)|(IMath.crop(g,0,255)<<8)|IMath.crop(b,0,255);
 		}
 	
 		public final static int add(int color1, int color2)
@@ -113,10 +112,10 @@ public final class idx3d_Color
 		public final static int sub(int color1, int color2)
 		// Substracts color2 from color1
 		{
-			pixel=(color1&MASK7Bit)+(~color2&MASK7Bit);
-			overflow=~pixel&0x1010100;
-			overflow=overflow-(overflow>>8);
-			return ALPHA|(~overflow&pixel);
+			pixel = (color1 & MASK7Bit) + (~color2 & MASK7Bit);
+			overflow = ~pixel & 0x1010100;
+			overflow = overflow - (overflow >> 8);
+			return ALPHA | (~overflow & pixel);
 		}
 	
 		public final static int subneg(int color1, int color2)
@@ -183,9 +182,9 @@ public final class idx3d_Color
 			int r=(color>>16)&255;
 			int g=(color>>8)&255;
 			int b=color&255;
-			r+=(int)(idx3d_Math.random()*(float)delta);
-			g+=(int)(idx3d_Math.random()*(float)delta);
-			b+=(int)(idx3d_Math.random()*(float)delta);
+			r+=(int)(IMath.random()*(float)delta);
+			g+=(int)(IMath.random()*(float)delta);
+			b+=(int)(IMath.random()*(float)delta);
 			return getCropColor(r,g,b);
 		}
 		
@@ -213,12 +212,12 @@ public final class idx3d_Color
 				pos1=size*c/(colors.length-1);
 				pos2=size*(c+1)/(colors.length-1);
 				range=pos2-pos1;
-				r1=idx3d_Color.getRed(c1)<<16;
-				g1=idx3d_Color.getGreen(c1)<<16;
-				b1=idx3d_Color.getBlue(c1)<<16;
-				r2=idx3d_Color.getRed(c2)<<16;
-				g2=idx3d_Color.getGreen(c2)<<16;
-				b2=idx3d_Color.getBlue(c2)<<16;
+				r1=IColor.getRed(c1)<<16;
+				g1=IColor.getGreen(c1)<<16;
+				b1=IColor.getBlue(c1)<<16;
+				r2=IColor.getRed(c2)<<16;
+				g2=IColor.getGreen(c2)<<16;
+				b2=IColor.getBlue(c2)<<16;
 				dr=(r2-r1)/range;
 				dg=(g2-g1)/range;
 				db=(b2-b1)/range;

@@ -37,29 +37,29 @@
 package idx3d;
 
 
-public class idx3d_FXLensFlare extends idx3d_FXPlugin
+public class IFXLensFlare extends IFXPlugin
 // Creates a lens flare
 {
-	public idx3d_Object flareObject;
+	public IObject flareObject;
 	
 	private int flares=0;
 	private boolean zBufferSensitive=true;
-	private idx3d_Texture[] flare;
+	private ITexture[] flare;
 	private float[] flareDist;
 	
 	// C O N S T R U C T O R S
 	
-		private idx3d_FXLensFlare(idx3d_Scene scene)
+		private IFXLensFlare(IScene scene)
 		{
 			super(scene);
 		}
 
-		public idx3d_FXLensFlare(String name, idx3d_Scene scene, boolean zBufferSensitive)
+		public IFXLensFlare(String name, IScene scene, boolean zBufferSensitive)
 		{
 			super(scene);
 			this.zBufferSensitive=zBufferSensitive;
-			flareObject=new idx3d_Object();
-			flareObject.addVertex(new idx3d_Vertex(1f,1f,1f));
+			flareObject=new IObject();
+			flareObject.addVertex(new IVertex(1f,1f,1f));
 			flareObject.rebuild();
 			scene.addObject(name,flareObject);
 		}
@@ -104,7 +104,7 @@ public class idx3d_FXLensFlare extends idx3d_FXPlugin
 
 	// I N T E R F A C E
 	
-		public void setPos(idx3d_Vector pos)
+		public void setPos(IVector pos)
 		{
 			flareObject.vertex[0].pos=pos;
 		}	
@@ -139,7 +139,7 @@ public class idx3d_FXLensFlare extends idx3d_FXPlugin
 		
 		public void addSecs(int count, int averidgeSize, int sizeDelta, int averidgeColor, int colorDelta)
 		{
-			for (int i=0;i<count;i++) addFlare(createSec(averidgeSize,sizeDelta,averidgeColor,colorDelta),idx3d_Math.random(-0.5f,3f));
+			for (int i=0;i<count;i++) addFlare(createSec(averidgeSize,sizeDelta,averidgeColor,colorDelta),IMath.random(-0.5f,3f));
 		}
 					
 
@@ -166,7 +166,7 @@ public class idx3d_FXLensFlare extends idx3d_FXPlugin
 								
 				for (int i=0; i<flares;i++)
 				{
-					zoom=idx3d_Math.pythagoras(dx,dy)/idx3d_Math.pythagoras(cx,cy);
+					zoom=IMath.pythagoras(dx,dy)/IMath.pythagoras(cx,cy);
 					zoom=(1-zoom)/2+1;
 					xsize=flare[i].width;
 					ysize=flare[i].height;
@@ -178,18 +178,18 @@ public class idx3d_FXLensFlare extends idx3d_FXPlugin
 
 	// P R I V A T E   M E T H O D S
 	
-		private void addFlare(idx3d_Texture texture, float relPos)
+		private void addFlare(ITexture texture, float relPos)
 		{
 			flares++;
 			
 			if (flares==1)
 			{
-				flare=new idx3d_Texture[1];
+				flare=new ITexture[1];
 				flareDist=new float[1];
 			}
 			else
 			{
-				idx3d_Texture[] temp1=new idx3d_Texture[flares];
+				ITexture[] temp1=new ITexture[flares];
 				System.arraycopy(flare,0,temp1,0,flares-1);
 				flare=temp1;
 				
@@ -202,11 +202,11 @@ public class idx3d_FXLensFlare extends idx3d_FXPlugin
 			flareDist[flares-1]=relPos;
 		}
 		
-		private idx3d_Texture createRadialTexture(int w, int h, int[] colormap, int[] alphamap)
+		private ITexture createRadialTexture(int w, int h, int[] colormap, int[] alphamap)
 		{
 			int offset;
 			float relX,relY;
-			idx3d_Texture newTexture=new idx3d_Texture(w,h);
+			ITexture newTexture=new ITexture(w,h);
 			int[] palette=getPalette(colormap,alphamap);
 			
 			for(int y=h-1;y>=0;y--)
@@ -216,7 +216,7 @@ public class idx3d_FXLensFlare extends idx3d_FXPlugin
 				{
 					relX=(float)(x-(w>>1))/(float)(w>>1);
 					relY=(float)(y-(h>>1))/(float)(h>>1);
-					newTexture.pixel[offset+x]=palette[idx3d_Math.crop((int)(255*Math.sqrt(relX*relX+relY*relY)),0,255)];
+					newTexture.pixel[offset+x]=palette[IMath.crop((int)(255*Math.sqrt(relX*relX+relY*relY)),0,255)];
 				}
 			}
 			return newTexture;			
@@ -231,38 +231,38 @@ public class idx3d_FXLensFlare extends idx3d_FXPlugin
 				r=(((color[i]>>16)&255)*alpha[i])>>8;
 				g=(((color[i]>>8)&255)*alpha[i])>>8;
 				b=((color[i]&255)*alpha[i])>>8;
-				palette[i]=idx3d_Color.getColor(r,g,b);
+				palette[i]=IColor.getColor(r,g,b);
 			}
 			return palette;
 		}
 		
-		private idx3d_Texture createGlow(int w, int h, int color, int alpha)
+		private ITexture createGlow(int w, int h, int color, int alpha)
 		{
 			return createRadialTexture(w,h,getGlowPalette(color),getConstantAlpha(alpha));
 		}
 		
-		private idx3d_Texture createRing(int size, int color)
+		private ITexture createRing(int size, int color)
 		{
 			return createRadialTexture(size,size,getColorPalette(color,color),getRingAlpha(40));
 		}
 		
-		private idx3d_Texture createSec(int size, int sizedelta, int color, int colordelta)
+		private ITexture createSec(int size, int sizedelta, int color, int colordelta)
 		{
-			int s=(int)idx3d_Math.randomWithDelta(size,sizedelta);
-			int c1=idx3d_Color.random(color,colordelta);
-			int c2=idx3d_Color.random(color,colordelta);
+			int s=(int)IMath.randomWithDelta(size,sizedelta);
+			int c1=IColor.random(color,colordelta);
+			int c2=IColor.random(color,colordelta);
 			return createRadialTexture(s,s,getColorPalette(c1,c2),getSecAlpha());
 		}
 		
-		private idx3d_Texture createRays(int size, int rays, int rad, int color)
+		private ITexture createRays(int size, int rays, int rad, int color)
 		{
 			int pos;	float relPos;
-			idx3d_Texture texture=new idx3d_Texture(size,size);
+			ITexture texture=new ITexture(size,size);
 			int[] radialMap=new int [1024];
-			idx3d_Math.clearBuffer(radialMap, 0);
+			IMath.clearBuffer(radialMap, 0);
 			for (int i=0;i<rays;i++)
 			{
-				pos=(int)idx3d_Math.random(rad,1023-rad);
+				pos=(int)IMath.random(rad,1023-rad);
 				for (int k=pos-rad; k<=pos+rad; k++)
 				{
 					relPos=(float)(k-pos+rad)/(float)(rad*2);
@@ -279,8 +279,8 @@ public class idx3d_FXLensFlare extends idx3d_FXPlugin
 					xrel=(float)(2*x-size)/(float)size;
 					yrel=(float)(2*y-size)/(float)size;
 					angle=(int)(1023*Math.atan2(xrel,yrel)/3.14159/2)&1023;
-					reldist=Math.max((int)(255-255*idx3d_Math.pythagoras(xrel,yrel)),0);
-					texture.pixel[x+offset]=idx3d_Color.scale(color,radialMap[angle]*reldist/255);
+					reldist=Math.max((int)(255-255*IMath.pythagoras(xrel,yrel)),0);
+					texture.pixel[x+offset]=IColor.scale(color,radialMap[angle]*reldist/255);
 				}
 			}
 			return texture;
@@ -302,7 +302,7 @@ public class idx3d_FXLensFlare extends idx3d_FXPlugin
 				r=(int)((float)cr*diffuse+specular);
 				g=(int)((float)cg*diffuse+specular);
 				b=(int)((float)cb*diffuse+specular);
-				palette[i]=idx3d_Color.getCropColor(r,g,b);
+				palette[i]=IColor.getCropColor(r,g,b);
 			}
 			return palette;
 		}
@@ -336,7 +336,7 @@ public class idx3d_FXLensFlare extends idx3d_FXPlugin
 		
 		private int[] getSecAlpha()
 		{
-			int[] alphaPalette=getRingAlpha((int)idx3d_Math.random(0,255));
+			int[] alphaPalette=getRingAlpha((int)IMath.random(0,255));
 			for (int i=0;i<256;i++) alphaPalette[i]=(alphaPalette[i]+255-i)>>2;
 			return alphaPalette;
 		}
@@ -360,7 +360,7 @@ public class idx3d_FXLensFlare extends idx3d_FXPlugin
 
 			for (int i=0;i<256;i++)
 			{
-				palette[i]=idx3d_Color.getColor(r>>8,g>>8,b>>8);
+				palette[i]=IColor.getColor(r>>8,g>>8,b>>8);
 				r+=dr; g+=dg; b+=db;
 			}
 			return palette;
