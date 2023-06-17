@@ -6,7 +6,7 @@ import java.applet.*;
 public final class demo3 extends Applet implements Runnable
 {
 	private Thread idx_Thread;
-	idx3d_Scene scene;
+	IScene scene;
 
 	int oldx=0;
 	int oldy=0;
@@ -19,22 +19,22 @@ public final class demo3 extends Applet implements Runnable
 		
 		// BUILD SCENE
 		
-			scene=new idx3d_Scene(this.size().width,this.size().height);
+			scene=new IScene(this.size().width,this.size().height);
 			
-			scene.addMaterial("Stone1",new idx3d_Material(new idx3d_Texture(getDocumentBase(),"stone1.jpg")));
-			scene.addMaterial("Stone2",new idx3d_Material(new idx3d_Texture(getDocumentBase(),"stone2.jpg")));
-			scene.addMaterial("Stone3",new idx3d_Material(new idx3d_Texture(getDocumentBase(),"stone3.jpg")));
-			scene.addMaterial("Stone4",new idx3d_Material(new idx3d_Texture(getDocumentBase(),"stone4.jpg")));
+			scene.addMaterial("Stone1",new IMaterial(new ITexture(getDocumentBase(),"stone1.jpg")));
+			scene.addMaterial("Stone2",new IMaterial(new ITexture(getDocumentBase(),"stone2.jpg")));
+			scene.addMaterial("Stone3",new IMaterial(new ITexture(getDocumentBase(),"stone3.jpg")));
+			scene.addMaterial("Stone4",new IMaterial(new ITexture(getDocumentBase(),"stone4.jpg")));
 			
-			scene.addLight("Light1",new idx3d_Light(new idx3d_Vector(0.2f,0.2f,1f),0xFFFFFF,144,120));			
-			scene.addLight("Light2",new idx3d_Light(new idx3d_Vector(-1f,-1f,1f),0x332211,100,40));
-			scene.addLight("Light3",new idx3d_Light(new idx3d_Vector(-1f,-1f,1f),0x666666,200,120));
+			scene.addLight("Light1",new ILight(new IVector(0.2f,0.2f,1f),0xFFFFFF,144,120));			
+			scene.addLight("Light2",new ILight(new IVector(-1f,-1f,1f),0x332211,100,40));
+			scene.addLight("Light3",new ILight(new IVector(-1f,-1f,1f),0x666666,200,120));
 			
 			try{
-				new idx3d_3ds_Importer().importFromStream(new java.net.URL(getDocumentBase(),"wobble.3ds").openStream(),scene);
+				new I3ds_Importer().importFromStream(new java.net.URL(getDocumentBase(),"wobble.3ds").openStream(),scene);
 				scene.rebuild();
 				for (int i=0; i<scene.objects;i++)
-					idx3d_TextureProjector.projectFrontal(scene.object[i]);
+					ITextureProjector.projectFrontal(scene.object[i]);
 				
 				scene.object("Sphere1").setMaterial(scene.material("Stone1"));
 				scene.object("Wobble1").setMaterial(scene.material("Stone2"));

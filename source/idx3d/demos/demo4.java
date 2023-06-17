@@ -6,7 +6,7 @@ import java.applet.*;
 public class demo4 extends Applet implements Runnable
 {
 	private Thread idx_Thread;
-	idx3d_Scene scene;
+	IScene scene;
 	
 	int oldx=0;
 	int oldy=0;
@@ -19,35 +19,35 @@ public class demo4 extends Applet implements Runnable
 		
 		// BUILD SCENE
 		
-			scene=new idx3d_Scene(this.size().width,this.size().height);
-			idx3d_Texture bkgrd=idx3d_Texture.blendTopDown(
-				idx3d_TextureFactory.CHECKERBOARD(this.size().width,this.size().height,4,0x000000,0x999999),
-				new idx3d_Texture(getDocumentBase(),"idxbkgrd.jpg"));
+			scene=new IScene(this.size().width,this.size().height);
+			ITexture bkgrd=ITexture.blendTopDown(
+				ITextureFactory.CHECKERBOARD(this.size().width,this.size().height,4,0x000000,0x999999),
+				new ITexture(getDocumentBase(),"idxbkgrd.jpg"));
 			scene.environment.setBackground(bkgrd);
 			
-			idx3d_Texture envmap=new idx3d_Texture(getDocumentBase(),"skymap.jpg");
-			idx3d_Texture texture=new idx3d_Texture(getDocumentBase(),"spectrum.jpg");
+			ITexture envmap=new ITexture(getDocumentBase(),"skymap.jpg");
+			ITexture texture=new ITexture(getDocumentBase(),"spectrum.jpg");
 			
-			idx3d_Material mode1=new idx3d_Material(0x0066FF);
+			IMaterial mode1=new IMaterial(0x0066FF);
 			mode1.setFlat(true);
 			
-			idx3d_Material mode2=new idx3d_Material(0x330099);
+			IMaterial mode2=new IMaterial(0x330099);
 			mode2.setEnvmap(envmap);
 			mode2.setReflectivity(63);
 			
-			idx3d_Material mode3=new idx3d_Material();
+			IMaterial mode3=new IMaterial();
 			mode3.setEnvmap(envmap);
 			
-			idx3d_Material mode4=new idx3d_Material(getDocumentBase(),"glass.material");
+			IMaterial mode4=new IMaterial(getDocumentBase(),"glass.material");
 			mode4.setTransparency(88);
 			
-			idx3d_Material mode5=new idx3d_Material(texture);
+			IMaterial mode5=new IMaterial(texture);
 			
-			idx3d_Material mode6=new idx3d_Material(texture);
+			IMaterial mode6=new IMaterial(texture);
 			mode6.setEnvmap(envmap);
 			mode6.setReflectivity(96);
 			
-			idx3d_Material mode7=new idx3d_Material(texture);
+			IMaterial mode7=new IMaterial(texture);
 			mode7.setEnvmap(envmap);
 			mode7.setReflectivity(96);
 			mode7.setTransparency(64);
@@ -60,14 +60,14 @@ public class demo4 extends Applet implements Runnable
 			scene.addMaterial("Mode6",mode6);
 			scene.addMaterial("Mode7",mode7);
 			
-			scene.addLight("Light1",new idx3d_Light(new idx3d_Vector(0.2f,0.2f,1f),0xFFFFFF,144,120));			
-			scene.addLight("Light2",new idx3d_Light(new idx3d_Vector(0.6f,-1f,1f),0x332211,100,40));
-			scene.addLight("Light3",new idx3d_Light(new idx3d_Vector(-1f,-1f,1f),0xccaa88,200,120));
+			scene.addLight("Light1",new ILight(new IVector(0.2f,0.2f,1f),0xFFFFFF,144,120));			
+			scene.addLight("Light2",new ILight(new IVector(0.6f,-1f,1f),0x332211,100,40));
+			scene.addLight("Light3",new ILight(new IVector(-1f,-1f,1f),0xccaa88,200,120));
 					
 			scene.environment.ambient=0x554433;
 			scene.defaultCamera.setFov(120f);
 				
-			scene.addObject("Torusknot",idx3d_ObjectFactory.TORUSKNOT(5f,1f,0.28f,1.2f,0.48f,0.8f,88,9));
+			scene.addObject("Torusknot",IObjectFactory.TORUSKNOT(5f,1f,0.28f,1.2f,0.48f,0.8f,88,9));
 			scene.object("Torusknot").rotate(0.2f,3.5f,-0.5f);
 			scene.object("Torusknot").setMaterial(scene.material("Mode4"));
 			scene.object("Torusknot").scale(0.72f);

@@ -6,13 +6,13 @@ import java.applet.*;
 public final class demo11 extends Applet implements Runnable
 {
 	private Thread idx_Thread;
-	idx3d_Scene scene;
+	IScene scene;
 
 	int oldx=0;
 	int oldy=0;
 	boolean autorotation=true;
 	boolean antialias=false;
-	idx3d_FXLensFlare lensFlare;
+	IFXLensFlare lensFlare;
 	
 	public void init()
 	{
@@ -20,25 +20,25 @@ public final class demo11 extends Applet implements Runnable
 		
 		// BUILD SCENE
 		
-			scene=new idx3d_Scene(this.size().width,this.size().height);
+			scene=new IScene(this.size().width,this.size().height);
 			
-			scene.addMaterial("Sky",new idx3d_Material(idx3d_TextureFactory.CHECKERBOARD(128,128,1,0x000000,0x666666)));
+			scene.addMaterial("Sky",new IMaterial(ITextureFactory.CHECKERBOARD(128,128,1,0x000000,0x666666)));
 			scene.material("Sky").setFlat(true);
 			
-			scene.addMaterial("Glass",new idx3d_Material(getDocumentBase(),"glass.material"));
+			scene.addMaterial("Glass",new IMaterial(getDocumentBase(),"glass.material"));
 			scene.material("Glass").setTransparency(60);
 			
-			scene.addLight("Light1",new idx3d_Light(new idx3d_Vector(-0.2f,-0.2f,1f),0xFFFFFF,120,120));			
-			scene.addLight("Light2",new idx3d_Light(new idx3d_Vector(-1f,-1f,-4f),0x0066FF,120,80));
+			scene.addLight("Light1",new ILight(new IVector(-0.2f,-0.2f,1f),0xFFFFFF,120,120));			
+			scene.addLight("Light2",new ILight(new IVector(-1f,-1f,-4f),0x0066FF,120,80));
 			
 			try{
-				new idx3d_3ds_Importer().importFromURL(new java.net.URL(getDocumentBase(),"demon.3ds"),scene);
+				new I3ds_Importer().importFromURL(new java.net.URL(getDocumentBase(),"demon.3ds"),scene);
 				scene.normalize();
 				
 				scene.object("Skydome").setMaterial(scene.material("Sky"));
 				
 				scene.object("Demon").setMaterial(scene.material("Glass"));
-				idx3d_TextureProjector.projectTop(scene.object("Demon"));
+				ITextureProjector.projectTop(scene.object("Demon"));
 				
 				scene.object("Demon").matrixMeltdown();
 				scene.defaultCamera.lookAt(scene.object("Demon").getCenter().transform(scene.matrix));
@@ -46,7 +46,7 @@ public final class demo11 extends Applet implements Runnable
 				scene.scale(3f);
 				scene.shift(0,0.32f,0);
 				
-				lensFlare=new idx3d_FXLensFlare("LensFlare1", scene,false);
+				lensFlare=new IFXLensFlare("LensFlare1", scene,false);
 				lensFlare.preset2();
 				scene.object("LensFlare1").scale(16f);
 			}

@@ -5,7 +5,7 @@ import java.awt.*;
 public class idx3d_TestComponent extends Panel implements Runnable
 {
 	private Thread idx_Thread;
-	idx3d_Scene scene;
+	IScene scene;
 	boolean initialized=false;
 	boolean antialias=false;
 
@@ -24,35 +24,35 @@ public class idx3d_TestComponent extends Panel implements Runnable
 		
 		// BUILD SCENE
 		
-			scene=new idx3d_Scene(this.size().width,this.size().height);
+			scene=new IScene(this.size().width,this.size().height);
 			
-			idx3d_Material crystal=new idx3d_Material("glass.material");
+			IMaterial crystal=new IMaterial("glass.material");
 			crystal.setReflectivity(255);
 			scene.addMaterial("Crystal",crystal);
 			
-			idx3d_Material plastic=new idx3d_Material(new idx3d_Texture("texture.jpg"));
+			IMaterial plastic=new IMaterial(new ITexture("texture.jpg"));
 			scene.addMaterial("Plastic",plastic);
 			
-			scene.environment.setBackground(idx3d_TextureFactory.CHECKERBOARD(160,120,2,0x000000,0x999999));
+			scene.environment.setBackground(ITextureFactory.CHECKERBOARD(160,120,2,0x000000,0x999999));
 			
-			scene.addLight("Light1",new idx3d_Light(new idx3d_Vector(0.2f,0.2f,1f),0xFFFFFF,320,80));			
-			scene.addLight("Light2",new idx3d_Light(new idx3d_Vector(-1f,-1f,1f),0xFFCC99,100,40));
+			scene.addLight("Light1",new ILight(new IVector(0.2f,0.2f,1f),0xFFFFFF,320,80));			
+			scene.addLight("Light2",new ILight(new IVector(-1f,-1f,1f),0xFFCC99,100,40));
 			
-			// Create Torus as a Lattice Object from a circle path
+			// Create Torus as a Lattice Object from a circle textureName
 				
-				idx3d_Vector[] path=new idx3d_Vector[9];
+				IVector[] path=new IVector[9];
 				
-				path[0]=new idx3d_Vector(0.4f,0.0f,0);
-				path[1]=new idx3d_Vector(0.6f,0.3f,0);
-				path[2]=new idx3d_Vector(0.8f,0.4f,0);
-				path[3]=new idx3d_Vector(0.9f,0.3f,0);
-				path[4]=new idx3d_Vector(1.0f,0.0f,0);
-				path[5]=new idx3d_Vector(0.9f,-0.3f,0);
-				path[6]=new idx3d_Vector(0.8f,-0.4f,0);
-				path[7]=new idx3d_Vector(0.6f,-0.3f,0);
-				path[8]=new idx3d_Vector(0.4f,0.0f,0);
+				path[0]=new IVector(0.4f,0.0f,0);
+				path[1]=new IVector(0.6f,0.3f,0);
+				path[2]=new IVector(0.8f,0.4f,0);
+				path[3]=new IVector(0.9f,0.3f,0);
+				path[4]=new IVector(1.0f,0.0f,0);
+				path[5]=new IVector(0.9f,-0.3f,0);
+				path[6]=new IVector(0.8f,-0.4f,0);
+				path[7]=new IVector(0.6f,-0.3f,0);
+				path[8]=new IVector(0.4f,0.0f,0);
 		
-				scene.addObject("Torus",idx3d_ObjectFactory.ROTATIONOBJECT(path,16));
+				scene.addObject("Torus",IObjectFactory.ROTATIONOBJECT(path,16));
 				scene.object("Torus").rotate(4.2f,0.2f,-0.5f);
 				scene.object("Torus").shift(-0.5f,0f,0f);
 				scene.object("Torus").scale(0.72f);
@@ -60,24 +60,24 @@ public class idx3d_TestComponent extends Panel implements Runnable
 				
 			// Create Wineglass as a Lattice Object
 			
-				path=new idx3d_Vector[15];
-				path[0]=new idx3d_Vector(0.0f,0.2f,0);
-				path[1]=new idx3d_Vector(0.13f,0.25f,0);
-				path[2]=new idx3d_Vector(0.33f,0.3f,0);
-				path[3]=new idx3d_Vector(0.43f,0.6f,0);
-				path[4]=new idx3d_Vector(0.48f,0.9f,0);
-				path[5]=new idx3d_Vector(0.5f,0.9f,0);
-				path[6]=new idx3d_Vector(0.45f,0.6f,0);
-				path[7]=new idx3d_Vector(0.35f,0.3f,0);
-				path[8]=new idx3d_Vector(0.25f,0.2f,0);
-				path[9]=new idx3d_Vector(0.1f,0.15f,0);
-				path[10]=new idx3d_Vector(0.1f,0.0f,0);
-				path[11]=new idx3d_Vector(0.1f,-0.5f,0);
-				path[12]=new idx3d_Vector(0.35f,-0.55f,0);
-				path[13]=new idx3d_Vector(0.4f,-0.6f,0);
-				path[14]=new idx3d_Vector(0.0f,-0.6f,0);
+				path=new IVector[15];
+				path[0]=new IVector(0.0f,0.2f,0);
+				path[1]=new IVector(0.13f,0.25f,0);
+				path[2]=new IVector(0.33f,0.3f,0);
+				path[3]=new IVector(0.43f,0.6f,0);
+				path[4]=new IVector(0.48f,0.9f,0);
+				path[5]=new IVector(0.5f,0.9f,0);
+				path[6]=new IVector(0.45f,0.6f,0);
+				path[7]=new IVector(0.35f,0.3f,0);
+				path[8]=new IVector(0.25f,0.2f,0);
+				path[9]=new IVector(0.1f,0.15f,0);
+				path[10]=new IVector(0.1f,0.0f,0);
+				path[11]=new IVector(0.1f,-0.5f,0);
+				path[12]=new IVector(0.35f,-0.55f,0);
+				path[13]=new IVector(0.4f,-0.6f,0);
+				path[14]=new IVector(0.0f,-0.6f,0);
 	
-				scene.addObject("Wineglass",idx3d_ObjectFactory.ROTATIONOBJECT(path,16));
+				scene.addObject("Wineglass",IObjectFactory.ROTATIONOBJECT(path,16));
 				scene.object("Wineglass").rotate(0.5f,0f,0f);
 				scene.object("Wineglass").setMaterial(scene.material("Crystal"));
 
@@ -157,7 +157,7 @@ public class idx3d_TestComponent extends Panel implements Runnable
 	private void export()
 	{
 		try{
-			idx3d_3ds_Exporter.exportToStream(new java.io.FileOutputStream(new java.io.File("export.3ds")),scene);
+			I3ds_Exporter.exportToStream(new java.io.FileOutputStream(new java.io.File("export.3ds")),scene);
 		}
 		catch(Exception ignored){}
 	}

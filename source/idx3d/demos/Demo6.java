@@ -8,7 +8,7 @@ public final class Demo6 extends RunnableApplet // Applet implements Runnable
 	
 	boolean antialias=false;
 	boolean useLensFlare=true;
-	idx3d_FXLensFlare lensFlare;
+	IFXLensFlare lensFlare;
 
 	public void init()
 	{
@@ -16,19 +16,19 @@ public final class Demo6 extends RunnableApplet // Applet implements Runnable
 		
 		// BUILD SCENE
 		
-			scene=new idx3d_Scene(this.size().width,this.size().height);
-			scene.environment.setBackground(new idx3d_Material(getDocumentBase(),"stardust.material").getTexture());
+			scene=new IScene(this.size().width,this.size().height);
+			scene.environment.setBackground(new IMaterial(getDocumentBase(),"stardust.material").getTexture());
 			
-			idx3d_Material metal=new idx3d_Material();
-			metal.setEnvmap(new idx3d_Texture(getDocumentBase(),"chrome.jpg"));
+			IMaterial metal=new IMaterial();
+			metal.setEnvmap(new ITexture(getDocumentBase(),"chrome.jpg"));
 			metal.setReflectivity(255);
 			scene.addMaterial("Metal",metal);
 			
-			scene.addLight("Light1",new idx3d_Light(new idx3d_Vector(0.2f,0.2f,1f),0xFFFFFF,320,80));			
+			scene.addLight("Light1",new ILight(new IVector(0.2f,0.2f,1f),0xFFFFFF,320,80));			
 			
 						
 			try{
-				new idx3d_3ds_Importer().importFromURL(new java.net.URL(getDocumentBase(),"wobble.3ds"),scene);
+				new I3ds_Importer().importFromURL(new java.net.URL(getDocumentBase(),"wobble.3ds"),scene);
 				scene.rebuild();
 				for (int i=0; i<scene.objects;i++)
 				{
@@ -40,7 +40,7 @@ public final class Demo6 extends RunnableApplet // Applet implements Runnable
 			}
 			catch(Exception e){System.out.println(e+"");}
 			
-			lensFlare=new idx3d_FXLensFlare("LensFlare1", scene,false);
+			lensFlare=new IFXLensFlare("LensFlare1", scene,false);
 			lensFlare.preset1();
 			scene.object("LensFlare1").scale(60f);
 	}

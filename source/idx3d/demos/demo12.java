@@ -6,13 +6,13 @@ import java.applet.*;
 public final class demo12 extends Applet implements Runnable
 {
 	private Thread idx_Thread;
-	idx3d_Scene scene;
+	IScene scene;
 
 	int oldx=0;
 	int oldy=0;
 	boolean autorotation=true;
 	boolean antialias=false;
-	idx3d_FXLensFlare lensFlare;
+	IFXLensFlare lensFlare;
 
 	public void init()
 	{
@@ -20,44 +20,44 @@ public final class demo12 extends Applet implements Runnable
 		
 		// BUILD SCENE
 		
-			scene=new idx3d_Scene(this.size().width,this.size().height);
+			scene=new IScene(this.size().width,this.size().height);
 			
-			scene.addMaterial("Sky",new idx3d_Material(getDocumentBase(),"nemesis.material"));
+			scene.addMaterial("Sky",new IMaterial(getDocumentBase(),"nemesis.material"));
 			scene.material("Sky").setFlat(true);
 			
-			scene.addMaterial("Glass",new idx3d_Material(getDocumentBase(),"glass.material"));
+			scene.addMaterial("Glass",new IMaterial(getDocumentBase(),"glass.material"));
 			scene.material("Glass").setTransparency(60);
 			
-			scene.addMaterial("Stone",new idx3d_Material(new idx3d_Texture(getDocumentBase(),"stone.jpg")));
+			scene.addMaterial("Stone",new IMaterial(new ITexture(getDocumentBase(),"stone.jpg")));
 			
-			scene.addMaterial("Chrome",new idx3d_Material(getDocumentBase(),"chrome.material"));
+			scene.addMaterial("Chrome",new IMaterial(getDocumentBase(),"chrome.material"));
 	
-			idx3d_Texture bluePlasma=new idx3d_Material(getDocumentBase(),"plasma.material").getTexture();
+			ITexture bluePlasma=new IMaterial(getDocumentBase(),"plasma.material").getTexture();
 			bluePlasma.toAverage();
-			idx3d_Texture redPlasma=bluePlasma.getClone();
-			idx3d_Texture greenPlasma=bluePlasma.getClone();
+			ITexture redPlasma=bluePlasma.getClone();
+			ITexture greenPlasma=bluePlasma.getClone();
 			int[] redPalette={0,0xFF0000};
 			int[] greenPalette={0,0xFF00};
 			int[] bluePalette={0,0xFF};
 						
-			redPlasma.colorize(idx3d_Color.makeGradient(redPalette,256));
-			greenPlasma.colorize(idx3d_Color.makeGradient(greenPalette,256));
-			bluePlasma.colorize(idx3d_Color.makeGradient(bluePalette,256));
+			redPlasma.colorize(IColor.makeGradient(redPalette,256));
+			greenPlasma.colorize(IColor.makeGradient(greenPalette,256));
+			bluePlasma.colorize(IColor.makeGradient(bluePalette,256));
 			
-			scene.addMaterial("Red Plasma",new idx3d_Material(redPlasma));
-			scene.addMaterial("Green Plasma",new idx3d_Material(greenPlasma));
-			scene.addMaterial("Blue Plasma",new idx3d_Material(bluePlasma));
+			scene.addMaterial("Red Plasma",new IMaterial(redPlasma));
+			scene.addMaterial("Green Plasma",new IMaterial(greenPlasma));
+			scene.addMaterial("Blue Plasma",new IMaterial(bluePlasma));
 			
-			scene.addLight("Light1",new idx3d_Light(new idx3d_Vector(-0.2f,-0.2f,1f),0xFFFFFF,120,120));			
-			scene.addLight("Light2",new idx3d_Light(new idx3d_Vector(-1f,-1f,-4f),0x0066FF,120,80));
+			scene.addLight("Light1",new ILight(new IVector(-0.2f,-0.2f,1f),0xFFFFFF,120,120));			
+			scene.addLight("Light2",new ILight(new IVector(-1f,-1f,-4f),0x0066FF,120,80));
 			
 			
 			try{
-				new idx3d_3ds_Importer().importFromURL(new java.net.URL(getDocumentBase(),"plasmacore.3ds"),scene);
+				new I3ds_Importer().importFromURL(new java.net.URL(getDocumentBase(),"plasmacore.3ds"),scene);
 				scene.normalize();
 				
 				//scene.object("Sky").setMaterial(scene.material("Sky"));
-				idx3d_TextureProjector.projectTop(scene.object("Sky"));
+				ITextureProjector.projectTop(scene.object("Sky"));
 				//scene.object("Floor1").setMaterial(scene.material("Chrome"));
 				//scene.object("Floor2").setMaterial(scene.material("Chrome"));
 				//scene.object("Axis").setMaterial(scene.material("Chrome"));
@@ -77,7 +77,7 @@ public final class demo12 extends Applet implements Runnable
 				scene.defaultCamera.setFov(120);
 				//scene.shift(0,0.32f,0);
 				
-				lensFlare=new idx3d_FXLensFlare("Core", scene,true);
+				lensFlare=new IFXLensFlare("Core", scene,true);
 				lensFlare.preset3();
 
 			}

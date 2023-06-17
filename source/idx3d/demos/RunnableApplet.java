@@ -2,32 +2,43 @@ package idx3d.demos;
 
 import java.applet.Applet;
 import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Desktop;
 import java.awt.Event;
 import java.awt.Frame;
 import java.awt.HeadlessException;
 import java.awt.Image;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 
 //import com.sun.j3d.utils.applet.MainFrame;
 
-import idx3d.idx3d_Scene;
+import idx3d.IScene;
 import java.util.LinkedList;
 import java.util.Queue;
+
+import javax.swing.JApplet;
+import javax.swing.JFrame;
 
 /**
  * Class to auto launch IDX3D Demos
  * @author Alessndro
  *
  */
+@SuppressWarnings("serial")
 public abstract class RunnableApplet extends Applet implements Runnable {
 
     public  Thread idx_Thread;
-    public idx3d_Scene scene;
+    public IScene scene;
     public int oldx=0;
     public int oldy=0;
     public boolean antialias=false;
     public boolean autorotation=true;
     public boolean handCursor=false;
     Queue<Image> fifo = new LinkedList<Image>();
+    
+    protected MainFrame main = null;
     
     public RunnableApplet(){
         
@@ -41,14 +52,53 @@ public abstract class RunnableApplet extends Applet implements Runnable {
         launch(this,width, height);
     }
     
-    protected void launch(Applet app){
-        MainFrame main = new MainFrame(app, 800, 600);
+    protected void launch(Applet app){      
+		this.main = new MainFrame(app, 600, 600);
     } 
     
     protected void launch(Applet app, int w, int h){
-        MainFrame main = new MainFrame(app, w, h);
+        this.main = new MainFrame(app, w, h);
     } 
 
+    @Override
+    public URL getCodeBase() {
+    	URL url = main.getCodeBase();
+    	if(url==null) {
+    		url = getClass().getResource(".");
+    	}    	
+    	return url;
+    }
+    
+    @Override
+    public URL getDocumentBase() {
+    	return main.getDocumentBase();
+    }
+    
+    @Override
+    public boolean isActive(){
+   	return true;
+   	}
+    
+   
+	public void showDocument(URL url) {
+		Desktop d = Desktop.getDesktop();
+		try {
+			d.browse(url.toURI());
+		} catch (IOException e) {			
+			e.printStackTrace();
+		} catch (URISyntaxException e) {		
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * 
+	 * 
+	 */
+	public void showStatus( String status ) {
+		main.showStatus(status);
+	}
+    
     public boolean imageUpdate(Image image, int a, int b, int c, int d, int e) {
         return true;
     }
@@ -61,6 +111,7 @@ public abstract class RunnableApplet extends Applet implements Runnable {
         setMovingCursor();
         return true;
     }
+    
 
     public boolean keyDown(Event evt, int key) {
         if (key == 32) {
@@ -128,18 +179,19 @@ public abstract class RunnableApplet extends Applet implements Runnable {
 
     protected void setMovingCursor() {
         if (getFrame() == null) return;
-        getFrame().setCursor(Frame.MOVE_CURSOR);
+        Cursor c = Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR);
+        getFrame().setCursor(c);
     }
 
     protected void setNormalCursor() {
         if (getFrame() == null) return;
-        getFrame().setCursor(Frame.HAND_CURSOR);
+        getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     }
 
-    protected Frame getFrame() {
+    protected JFrame getFrame() {
         Component comp = this;
         while ((comp = comp.getParent()) != null)
-            if (comp instanceof Frame) return (Frame) comp;
+            if (comp instanceof Frame) return (JFrame) comp;
         return null;
     }
    

@@ -6,15 +6,15 @@ import java.io.*;
 
 public final class idx3dMaterialLab extends Frame
 {
-	idx3d_Scene objectView;
-	idx3d_Screen textureScreen;
-	idx3d_Screen envmapScreen;
+	IScene objectView;
+	IScreen textureScreen;
+	IScreen envmapScreen;
 	
 	Image doubleBuffer1=null; //object View
 	Image doubleBuffer2=null; //texture
 	Image doubleBuffer3=null; //envmap
 	
-	idx3d_Material material;
+	IMaterial material;
 		
 	int oldx=0;
 	int oldy=0;
@@ -45,25 +45,25 @@ public final class idx3dMaterialLab extends Frame
 		setBackground(Color.lightGray);
 		normal=new Font("Helvetica",0,11);
 		
-		material=new idx3d_Material(0x66FF);
+		material=new IMaterial(0x66FF);
 		material.setTransparency(63);
 		
-		objectView=new idx3d_Scene(280,240);
-		textureScreen=new idx3d_Screen(200,200);
-		envmapScreen=new idx3d_Screen(200,200);
+		objectView=new IScene(280,240);
+		textureScreen=new IScreen(200,200);
+		envmapScreen=new IScreen(200,200);
 		
 		objectView.setAmbient(0x333333);
-		objectView.environment.setBackground(idx3d_TextureFactory.CHECKERBOARD(160,120,2,0x000000,0x999999));
-		objectView.addLight("Light1",new idx3d_Light(new idx3d_Vector(0.2f,0.2f,1f),0xFFFFFF,320,120));			
-		//objectView.addLight("Light2",new idx3d_Light(new idx3d_Vector(-1f,-1f,1f),0xFFFFFF,160,200));
+		objectView.environment.setBackground(ITextureFactory.CHECKERBOARD(160,120,2,0x000000,0x999999));
+		objectView.addLight("Light1",new ILight(new IVector(0.2f,0.2f,1f),0xFFFFFF,320,120));			
+		//objectView.addLight("Light2",new ILight(new IVector(-1f,-1f,1f),0xFFFFFF,160,200));
 		
-		idx3d_Object trefoil=idx3d_ObjectFactory.TORUSKNOT(2f,3f,0.4f,1.2f,0.48f,1.2f,120,8);
+		IObject trefoil=IObjectFactory.TORUSKNOT(2f,3f,0.4f,1.2f,0.48f,1.2f,120,8);
 		objectView.addObject("Trefoil",trefoil);
 		objectView.object("Trefoil").rotate(0.2f,3.5f,-0.5f);
 		objectView.object("Trefoil").setMaterial(material);
 		objectView.object("Trefoil").scale(0.4f);
 		objectView.object("Trefoil").removeDuplicateVertices();
-		idx3d_TextureProjector.projectTop(objectView.object("Trefoil"));
+		ITextureProjector.projectTop(objectView.object("Trefoil"));
 		
 		show();
 		
@@ -289,7 +289,7 @@ public final class idx3dMaterialLab extends Frame
 		if (newFile==null) return;
 		try{
 			objectView.removeAllObjects();
-			new idx3d_3ds_Importer().importFromStream(new FileInputStream(newFile),objectView);
+			new I3ds_Importer().importFromStream(new FileInputStream(newFile),objectView);
 			objectView.rebuild();
 			for (int i=0; i<objectView.objects;i++)
 				objectView.object[i].setMaterial(material);
@@ -300,7 +300,7 @@ public final class idx3dMaterialLab extends Frame
 	}
 	
 		
-	public void setSettings(idx3d_TextureSettings settings, boolean mode)
+	public void setSettings(ITextureSettings settings, boolean mode)
 	{
 		if (mode)
 		{
@@ -330,27 +330,27 @@ public final class idx3dMaterialLab extends Frame
 	private void projectTop()
 	{
 		for (int i=objectView.objects-1;i>=0;i--)
-			idx3d_TextureProjector.projectTop(objectView.object[i]);
+			ITextureProjector.projectTop(objectView.object[i]);
 	}
 	
 	private void projectFrontal()
 	{
 		for (int i=objectView.objects-1;i>=0;i--)
-			idx3d_TextureProjector.projectFrontal(objectView.object[i]);
+			ITextureProjector.projectFrontal(objectView.object[i]);
 	}		
 	
 	private void importTexture()
 	{
 		File newFile=browseForFile("Import Texture",true);
 		if (newFile==null) return;
-		material.setTexture(new idx3d_Texture(newFile.getPath()));
+		material.setTexture(new ITexture(newFile.getPath()));
 	}
 	
 	private void importEnvmap()
 	{
 		File newFile=browseForFile("Import Envmap",true);
 		if (newFile==null) return;
-		material.setEnvmap(new idx3d_Texture(newFile.getPath()));
+		material.setEnvmap(new ITexture(newFile.getPath()));
 	}
 	
 	private void noTexture()
@@ -388,14 +388,14 @@ public final class idx3dMaterialLab extends Frame
 			out.writeByte(material.getReflectivity());
 			out.writeBoolean(material.isFlat());
 			
-			idx3d_TextureSettings settings=null;
+			ITextureSettings settings=null;
 			
 			// Texture
 			if (material.getTexture()==null) id=0;
-			else if (material.getTexture().path!=null) id=1;
+			else if (material.getTexture().textureName!=null) id=1;
 			else id=2;
 			out.writeByte(id);
-			if (id==1) out.writeUTF(material.getTexture().path);
+			if (id==1) out.writeUTF(material.getTexture().textureName);
 			if (id==2)
 			{
 				settings=material.textureSettings;
@@ -412,10 +412,10 @@ public final class idx3dMaterialLab extends Frame
 
 			// Envmap
 			if (material.getEnvmap()==null) id=0;
-			else if (material.getEnvmap().path!=null) id=1;
+			else if (material.getEnvmap().textureName!=null) id=1;
 			else id=2;
 			out.writeByte(id);
-			if (id==1) out.writeUTF(material.getEnvmap().path);
+			if (id==1) out.writeUTF(material.getEnvmap().textureName);
 			if (id==2)
 			{
 				settings=material.envmapSettings;
@@ -441,9 +441,9 @@ public final class idx3dMaterialLab extends Frame
 		File file=browseForFile("Read Material",true);
 		if (file==null) return;
 
-		idx3d_Material newMaterial=null;
+		IMaterial newMaterial=null;
 		try{
-			newMaterial=new idx3d_Material(file.getPath());
+			newMaterial=new IMaterial(file.getPath());
 		}
 		catch(Exception ignored) {return;}
 		color.setText(Integer.toHexString(newMaterial.getColor()));

@@ -4,7 +4,7 @@ package idx3d.tests;
 
 import java.util.Arrays;
 
-import idx3d.idx3d_Math;
+import idx3d.IMath;
 /**
  * Testing sin/cos
  * 
@@ -184,7 +184,7 @@ public class MathBench {
           int idx = i;// index(angle);
           float degree = (float) Math.toDegrees(angle);
           float sin = (float) Math.sin(angle);
-          float lut = (float) idx3d_Math.sin(angle);
+          float lut = (float) IMath.sin(angle);
           float erro = (float) Math.toDegrees(Math.asin(Math.abs(lut-sin)));
           System.out.printf("%3d \t %7.4f \t%7.4f \t%7.5f \t %7.5f \t%7.6f \t%7.6f\n", 
                   idx, degree, angle, sin, lut, Math.abs(sin - lut), erro);

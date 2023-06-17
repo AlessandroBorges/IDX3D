@@ -6,7 +6,7 @@ import java.applet.*;
 public final class demo2 extends Applet implements Runnable
 {
 	private Thread idx_Thread;
-	idx3d_Scene scene;
+	IScene scene;
 
 	int oldx=0;
 	int oldy=0;
@@ -20,17 +20,17 @@ public final class demo2 extends Applet implements Runnable
 		
 		// BUILD SCENE
 		
-			scene=new idx3d_Scene(this.size().width,this.size().height);
+			scene=new IScene(this.size().width,this.size().height);
 			
-			idx3d_Material m=new idx3d_Material();
-			m.setTexture(new idx3d_Texture(getImage(getDocumentBase(),"texture.jpg")));
+			IMaterial m=new IMaterial();
+			m.setTexture(new ITexture(getImage(getDocumentBase(),"texture.jpg")));
 			m.setReflectivity(255);
 			scene.addMaterial("Material1",m);
 			
-			scene.addLight("Light1",new idx3d_Light(new idx3d_Vector(0.2f,0.2f,1f),0xFFFFFF,320,240));			
-			scene.addLight("Light2",new idx3d_Light(new idx3d_Vector(-0.6f,-0.8f,1f),0x998877,240,120));			
+			scene.addLight("Light1",new ILight(new IVector(0.2f,0.2f,1f),0xFFFFFF,320,240));			
+			scene.addLight("Light2",new ILight(new IVector(-0.6f,-0.8f,1f),0x998877,240,120));			
 
-			scene.addObject("Field",idx3d_ObjectFactory. FIELD3D(20, 1f));
+			scene.addObject("Field",IObjectFactory. FIELD3D(20, 1f));
 			
 			scene.object("Field").setMaterial(scene.material("Material1"));
 			scene.object("Field").scale(0.88f);

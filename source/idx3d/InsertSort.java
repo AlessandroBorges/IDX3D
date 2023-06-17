@@ -47,9 +47,9 @@ public class InsertSort {
        }
    }
    
-   public static void insertionSort(idx3d_Triangle[] arr) {
+   public static void insertionSort(ITriangle[] arr) {
        int j;
-       idx3d_Triangle newValue; 
+       ITriangle newValue; 
        
        for (int i = 1; i < arr.length; i++) {
            newValue = arr[i];
@@ -68,9 +68,9 @@ public class InsertSort {
     * @param left - left most index, zero based
     * @param right - rightmost index. Must be < arr.length
     */
-   public static void insertionSort(idx3d_Triangle[] arr, int left, int right) {
+   public static void insertionSort(ITriangle[] arr, int left, int right) {
        int i, j;
-       idx3d_Triangle newValue; 
+       ITriangle newValue; 
        
        for (i = left + 1; i < right; i++) {
            newValue = arr[i];

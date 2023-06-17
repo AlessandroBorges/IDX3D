@@ -101,6 +101,7 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 /// Run an Applet as an application.
@@ -138,6 +139,7 @@ import javax.swing.JPanel;
 // <A HREF="/resources/classes/Acme/MainFrame.java">Fetch the software.</A><BR>
 // <A HREF="/resources/classes/Acme.tar.Z">Fetch the entire Acme package.</A>
 
+@SuppressWarnings("serial")
 public class MainFrame extends JFrame implements
                    Runnable, AppletStub, AppletContext
 {
@@ -147,121 +149,124 @@ public class MainFrame extends JFrame implements
     private String name;
     private boolean barebones = true;
     private Applet applet;
-    private Label label = null;
+    private JLabel label = null;
     private Dimension appletSize;
 
     private static final String PARAM_PROP_PREFIX = "parameter.";
 
-    /// Constructor with everything specified.
-    public MainFrame(Applet applet, String[] args,
-		     int width, int height) {
-	build(applet, args, width, height);
-    }
-
-    /// Constructor with no default width/height.
-    public MainFrame(Applet applet, String[] args ) {
-	build(applet, args, -1, -1);
-    }
-
-    /// Constructor with no arg parsing.
-    public MainFrame(Applet applet, int width, int height) {
-	build( applet, null, width, height );
-    }
-
-    // Internal constructor routine.
-    private void build(	Applet applet, String[] args,
-			int width, int height) {
-	++instances;
-	this.applet = applet;
-	this.args = args;
-	applet.setStub( this );
-	name = applet.getClass().getName();
-	setTitle( name );
-
-	// Set up properties.
-	Properties props = System.getProperties();
-	props.put( "browser", "Acme.MainFrame" );
-	props.put( "browser.version", "11jul96" );
-	props.put( "browser.vendor", "Acme Laboratories" );
-	props.put( "browser.vendor.url", "http://www.acme.com/" );
-
-	// Turn args into parameters by way of the properties list.
-	if ( args != null )
-	    parseArgs( args, props );
-
-	// If width and height are specified in the parameters, override
-	// the compiled-in values.
-	String widthStr = getParameter( "width" );
-	if ( widthStr != null ) {
-	    width = Integer.parseInt( widthStr );
+	/// Constructor with everything specified.
+	public MainFrame(Applet applet, String[] args, int width, int height) {
+		build(applet, args, width, height);
 	}
 
-	String heightStr = getParameter( "height" );
-	if ( heightStr != null ) {
-	    height = Integer.parseInt( heightStr );
+	/// Constructor with no default width/height.
+	public MainFrame(Applet applet, String[] args) {
+		build(applet, args, -1, -1);
 	}
 
-	// Were width and height specified somewhere?
-	if ((width == -1) || (height == -1)) {
-	    System.err.println( "Width and height must be specified." );
-	    return;
+	/// Constructor with no arg parsing.
+	public MainFrame(Applet applet, int width, int height) {
+		build(applet, null, width, height);
 	}
 
-	// Do we want to run bare-bones?
-	String bonesStr = getParameter( "barebones" );
-	if ((bonesStr != null) && bonesStr.equals( "true" )) {
-	    barebones = true;
-	}
+	// Internal constructor routine.
+	private void build(Applet applet, String[] args, int width, int height) {
+		++instances;
+		this.applet = applet;
+		this.args = args;
+		applet.setStub(this);
+		name = applet.getClass().getName();
+		setTitle(name);
 
-	// Lay out components.
-	setLayout( new BorderLayout() );
-	Container c = this.getContentPane();
-	JPanel panel = new JPanel();
-	panel.setLayout(new BorderLayout());
-	panel.add(applet,BorderLayout.CENTER );
-	c.add(panel, BorderLayout.CENTER);
+		// Set up properties.
+		Properties props = System.getProperties();
+		props.put("browser", "Acme.MainFrame");
+		props.put("browser.version", "11jul96");
+		props.put("browser.vendor", "Acme Laboratories");
+		props.put("browser.vendor.url", "http://www.acme.com/");
 
-	// Set up size.
-	pack();
-	validate();
-	appletSize = applet.getSize();
-	applet.setSize( width, height );
-	setVisible(true);
+		// Turn args into parameters by way of the properties list.
+		if (args != null)
+			parseArgs(args, props);
 
-
-	/*
-	  Added WindowListener inner class to detect close events.
-	*/
-	SecurityManager sm = System.getSecurityManager();
-	boolean doExit = true;
-
-	if (sm != null) {
-	    try {
-		sm.checkExit(0);
-	    } catch (SecurityException e) {
-		doExit = false;
-	    }
-	}
-
-	final boolean _doExit = doExit;
-
-	addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent winEvent) {
-		if (MainFrame.this.applet != null) {
-		    MainFrame.this.applet.destroy();
+		// If width and height are specified in the parameters, override
+		// the compiled-in values.
+		String widthStr = getParameter("width");
+		if (widthStr != null) {
+			width = Integer.parseInt(widthStr);
 		}
-		Window w = winEvent.getWindow();
-		w.hide();
-		try {
-		    w.dispose();
-		} catch (IllegalStateException e) {}
 
-		if (_doExit) {
-		    System.exit(0);
+		String heightStr = getParameter("height");
+		if (heightStr != null) {
+			height = Integer.parseInt(heightStr);
 		}
-	    }
-	});
+
+		// Were width and height specified somewhere?
+		if ((width == -1) || (height == -1)) {
+			System.err.println("Width and height must be specified.");
+			return;
+		}
+
+		// Do we want to run bare-bones?
+		String bonesStr = getParameter("barebones");
+		if ((bonesStr != null) && bonesStr.equals("true")) {
+			barebones = true;
+		}
+
+		// Lay out components.
+		setLayout(new BorderLayout());
+		Container c = this.getContentPane();
+		JPanel panel = new JPanel();
+		panel.setLayout(new BorderLayout());
+		panel.add(applet, BorderLayout.CENTER);
+
+		c.add(panel, BorderLayout.CENTER);
+		this.label = new JLabel();
+		c.add(label, BorderLayout.SOUTH);
+		// Set up size.
+
+		panel.setSize(width, height);
+		appletSize = panel.getSize();
+		panel.setPreferredSize(appletSize);
+
+		pack();
+		validate();
+		setLocationRelativeTo(null);
+		setVisible(true);
+
+		/*
+		 * Added WindowListener inner class to detect close events.
+		 */
+		SecurityManager sm = System.getSecurityManager();
+		boolean doExit = true;
+		if (sm != null) {
+			try {
+				sm.checkExit(0);
+			} catch (SecurityException e) {
+				doExit = false;
+			}
+		}
+
+		final boolean _doExit = doExit;
+
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent winEvent) {
+				if (MainFrame.this.applet != null) {
+					MainFrame.this.applet.destroy();
+				}
+				Window w = winEvent.getWindow();
+				w.hide();
+				try {
+					w.dispose();
+				} catch (IllegalStateException e) {
+				}
+
+				if (_doExit) {
+					System.exit(0);
+				}
+			}
+		});
 
 	// Start a separate thread to call the applet's init() and start()
 	// methods, in case they take a long time.
@@ -373,7 +378,9 @@ public class MainFrame extends JFrame implements
 	// I suspect that in a future release, JavaSoft will add an
 	// audio content handler which encapsulates this, and then
 	// we can just do a getContent just like for images.
-	return new sun.applet.AppletAudioClip( url );
+    	
+	//return new sun.applet.AppletAudioClip( url );
+    	return null;
     }
 
     @Override

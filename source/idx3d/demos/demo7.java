@@ -6,13 +6,13 @@ import java.applet.*;
 public final class demo7 extends Applet implements Runnable
 {
 	private Thread idx_Thread;
-	idx3d_Scene scene;
+	IScene scene;
 
 	int oldx=0;
 	int oldy=0;
 	boolean autorotation=true;
 	boolean antialias=false;
-	idx3d_FXLensFlare lensFlare;
+	IFXLensFlare lensFlare;
 
 	public void init()
 	{
@@ -20,32 +20,32 @@ public final class demo7 extends Applet implements Runnable
 
 		// BUILD SCENE
 
-			scene=new idx3d_Scene(this.size().width,this.size().height);
+			scene=new IScene(this.size().width,this.size().height);
 
-			scene.addMaterial("Stone1", new idx3d_Material(new idx3d_Texture(getDocumentBase(),"stone5.jpg")));
-			scene.addMaterial("Stone2", new idx3d_Material(new idx3d_Texture(getDocumentBase(),"stone4.jpg")));
+			scene.addMaterial("Stone1", new IMaterial(new ITexture(getDocumentBase(),"stone5.jpg")));
+			scene.addMaterial("Stone2", new IMaterial(new ITexture(getDocumentBase(),"stone4.jpg")));
 
-			scene.addLight("Light1",new idx3d_Light(new idx3d_Vector(-0.2f,-0.2f,1f),0xFFFFFF,200,120));
-			scene.addLight("Light2",new idx3d_Light(new idx3d_Vector(-1f,-1f,1f),0x663300,320,80));
-			scene.addLight("Light3",new idx3d_Light(new idx3d_Vector(0.5f,0.5f,1f),0x665544,240,48));
+			scene.addLight("Light1",new ILight(new IVector(-0.2f,-0.2f,1f),0xFFFFFF,200,120));
+			scene.addLight("Light2",new ILight(new IVector(-1f,-1f,1f),0x663300,320,80));
+			scene.addLight("Light3",new ILight(new IVector(0.5f,0.5f,1f),0x665544,240,48));
 
 			scene.setAmbient(0x221911);
 
 			try{
-				new idx3d_3ds_Importer().importFromURL(new java.net.URL(getDocumentBase(),"venus.3ds"),scene);
+				new I3ds_Importer().importFromURL(new java.net.URL(getDocumentBase(),"venus.3ds"),scene);
 				scene.normalize();
 
 				scene.object("Cave").setMaterial(scene.material("Stone1"));
-				idx3d_TextureProjector.projectFrontal(scene.object("Cave"));
+				ITextureProjector.projectFrontal(scene.object("Cave"));
 
 				scene.object("Venus").setMaterial(scene.material("Stone2"));
-				idx3d_TextureProjector.projectFrontal(scene.object("Venus"));
+				ITextureProjector.projectFrontal(scene.object("Venus"));
 
 
 				scene.rotate(3.84159265f/2,1.7f,0f);
 				scene.scale(3.6f);
 
-				lensFlare=new idx3d_FXLensFlare("LensFlare1", scene,true);
+				lensFlare=new IFXLensFlare("LensFlare1", scene,true);
 				lensFlare.preset2();
 				scene.object("LensFlare1").scale(8f);
 			}

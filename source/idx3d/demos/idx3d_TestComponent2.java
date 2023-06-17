@@ -6,7 +6,7 @@ import java.io.*;
 public class idx3d_TestComponent2 extends Panel implements Runnable
 {
 	private Thread idx_Thread;
-	idx3d_Scene scene;
+	IScene scene;
 	boolean initialized=false;
 	boolean antialias=false;
 
@@ -25,22 +25,22 @@ public class idx3d_TestComponent2 extends Panel implements Runnable
 		
 		// BUILD SCENE
 		
-			scene=new idx3d_Scene(this.size().width,this.size().height);
+			scene=new IScene(this.size().width,this.size().height);
 			
-			scene.addMaterial("Stone1",new idx3d_Material(new idx3d_Texture("stone1.jpg")));
-			scene.addMaterial("Stone2",new idx3d_Material(new idx3d_Texture("stone2.jpg")));
-			scene.addMaterial("Stone3",new idx3d_Material(new idx3d_Texture("stone3.jpg")));
-			scene.addMaterial("Stone4",new idx3d_Material(new idx3d_Texture("stone4.jpg")));
+			scene.addMaterial("Stone1",new IMaterial(new ITexture("stone1.jpg")));
+			scene.addMaterial("Stone2",new IMaterial(new ITexture("stone2.jpg")));
+			scene.addMaterial("Stone3",new IMaterial(new ITexture("stone3.jpg")));
+			scene.addMaterial("Stone4",new IMaterial(new ITexture("stone4.jpg")));
 			
-			scene.addLight("Light1",new idx3d_Light(new idx3d_Vector(0.2f,0.2f,1f),0xFFFFFF,144,120));			
-			scene.addLight("Light2",new idx3d_Light(new idx3d_Vector(-1f,-1f,1f),0x332211,100,40));
-			scene.addLight("Light3",new idx3d_Light(new idx3d_Vector(-1f,-1f,1f),0x666666,200,120));
+			scene.addLight("Light1",new ILight(new IVector(0.2f,0.2f,1f),0xFFFFFF,144,120));			
+			scene.addLight("Light2",new ILight(new IVector(-1f,-1f,1f),0x332211,100,40));
+			scene.addLight("Light3",new ILight(new IVector(-1f,-1f,1f),0x666666,200,120));
 			
 			try{
-				new idx3d_3ds_Importer().importFromStream(new FileInputStream(new File("wobble.3ds")),scene);
+				new I3ds_Importer().importFromStream(new FileInputStream(new File("wobble.3ds")),scene);
 				scene.rebuild();
 				for (int i=0; i<scene.objects;i++)
-					idx3d_TextureProjector.projectFrontal(scene.object[i]);
+					ITextureProjector.projectFrontal(scene.object[i]);
 				
 				scene.object("Sphere1").setMaterial(scene.material("Stone1"));
 				scene.object("Wobble1").setMaterial(scene.material("Stone2"));

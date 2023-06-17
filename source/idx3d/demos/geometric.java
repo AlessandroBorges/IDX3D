@@ -6,7 +6,7 @@ import java.applet.*;
 public final class geometric extends Applet implements Runnable
 {
 	private Thread idx_Thread;
-	idx3d_Scene scene;
+	IScene scene;
 
 	int oldx=0;
 	int oldy=0;
@@ -20,26 +20,26 @@ public final class geometric extends Applet implements Runnable
 		
 		// BUILD SCENE
 		
-			scene=new idx3d_Scene(this.size().width,this.size().height);
+			scene=new IScene(this.size().width,this.size().height);
 		
-			scene.addMaterial("default",new idx3d_Material(new idx3d_Texture(getDocumentBase(),"texture.jpg")));
-			scene.material("default").setEnvmap(new idx3d_Texture(getDocumentBase(),"skymap.jpg"));
+			scene.addMaterial("default",new IMaterial(new ITexture(getDocumentBase(),"texture.jpg")));
+			scene.material("default").setEnvmap(new ITexture(getDocumentBase(),"skymap.jpg"));
 			scene.material("default").setWireframe(true);
 			scene.material("default").setColor(0x0066FF);
 			//scene.material("default").setFlat(true);
-			//scene.addLight("Light1",new idx3d_Light(new idx3d_Vector(0.2f,0.2f,1f),0xFFFFFF,80,200));			
-			//scene.addLight("Light2",new idx3d_Light(new idx3d_Vector(-1f,-1f,0.5f),0xFFDDAA,120,80));
+			//scene.addLight("Light1",new ILight(new IVector(0.2f,0.2f,1f),0xFFFFFF,80,200));			
+			//scene.addLight("Light2",new ILight(new IVector(-1f,-1f,0.5f),0xFFDDAA,120,80));
 			
-			scene.addLight("Light1",new idx3d_Light(new idx3d_Vector(0f,0f,1f),0xFFFFFF,200,80));
+			scene.addLight("Light1",new ILight(new IVector(0f,0f,1f),0xFFFFFF,200,80));
 			
 			try{
-				new idx3d_3ds_Importer().importFromURL(new java.net.URL(getDocumentBase(),"demon.3ds"),scene);
+				new I3ds_Importer().importFromURL(new java.net.URL(getDocumentBase(),"demon.3ds"),scene);
 				scene.normalize();
 				
 				scene.object("Skydome").setMaterial(scene.material("default"));
 				
 				scene.object("Demon").setMaterial(scene.material("default"));
-				idx3d_TextureProjector.projectTop(scene.object("Demon"));
+				ITextureProjector.projectTop(scene.object("Demon"));
 				
 				scene.object("Demon").matrixMeltdown();
 				scene.defaultCamera.lookAt(scene.object("Demon").getCenter().transform(scene.matrix));
@@ -124,9 +124,9 @@ public final class geometric extends Applet implements Runnable
 		if ((char)key=='r') {scene.resize(200,200); return true; }		
 		if ((char)key=='a') {antialias=!antialias; scene.setAntialias(antialias); return true; }
 		
-		if ((char)key=='f') {for (int i=0; i<scene.objects;i++) idx3d_TextureProjector.projectFrontal(scene.object[i]); return true; }
-		if ((char)key=='t') {for (int i=0; i<scene.objects;i++) idx3d_TextureProjector.projectTop(scene.object[i]); return true; }
-		if ((char)key=='c') {for (int i=0; i<scene.objects;i++) idx3d_TextureProjector.projectCylindric(scene.object[i]); return true; }
+		if ((char)key=='f') {for (int i=0; i<scene.objects;i++) ITextureProjector.projectFrontal(scene.object[i]); return true; }
+		if ((char)key=='t') {for (int i=0; i<scene.objects;i++) ITextureProjector.projectTop(scene.object[i]); return true; }
+		if ((char)key=='c') {for (int i=0; i<scene.objects;i++) ITextureProjector.projectCylindric(scene.object[i]); return true; }
 		if ((char)key=='d') {for (int i=0;i<scene.objects;i++) scene.object[i].removeDuplicateVertices(); scene.printSceneInfo(); return true; }
 		if ((char)key=='m') {for (int i=0;i<scene.objects;i++) scene.object[i].meshSmooth(); return true; }
 		return true;

@@ -8,17 +8,17 @@ import java.awt.Image;
 
 //import com.sun.j3d.utils.applet.MainFrame;
 
-import idx3d.idx3d_3ds_Importer;
-import idx3d.idx3d_Material;
-import idx3d.idx3d_Matrix;
-import idx3d.idx3d_ObjectFactory;
-import idx3d.idx3d_Scene;
-import idx3d.idx3d_Vector;
+import idx3d.I3ds_Importer;
+import idx3d.IMaterial;
+import idx3d.IMatrix;
+import idx3d.IObjectFactory;
+import idx3d.IScene;
+import idx3d.IVector;
 
 @SuppressWarnings("serial")
 public final class Demo8 extends Applet implements Runnable {
     private Thread idx_Thread;
-    idx3d_Scene    scene;
+    IScene    scene;
 
     int            oldx         = 0;
     int            oldy         = 0;
@@ -30,19 +30,19 @@ public final class Demo8 extends Applet implements Runnable {
 
         // BUILD SCENE
 
-        scene = new idx3d_Scene(getWidth(), getHeight());
+        scene = new IScene(getWidth(), getHeight());
 
-        scene.addMaterial("Chrome", new idx3d_Material(getDocumentBase(), "chrome.material"));
+        scene.addMaterial("Chrome", new IMaterial(getDocumentBase(), "chrome.material"));
 
         try {
-            new idx3d_3ds_Importer()
+            new I3ds_Importer()
                 .importFromStream(new java.net.URL(getDocumentBase(), "mech.3ds").openStream(),   scene);
             
             scene.rotateSelf(20, 15, 20);
             
             
             
-            new idx3d_3ds_Importer()
+            new I3ds_Importer()
             .importFromStream(new java.net.URL(getDocumentBase(), "mech.3ds").openStream(),   scene);
              scene.rebuild();
             

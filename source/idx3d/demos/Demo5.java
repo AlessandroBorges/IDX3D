@@ -6,6 +6,12 @@ import java.applet.*;
 
 public final class Demo5 extends RunnableApplet{ // Applet implements Runnable {
     
+	
+	static {
+		 System.setProperty("sun.java2d.d3d", "false");
+		 System.setProperty("sun.java2d.noddraw", "true");
+	}
+	
     private boolean useAWTThread = false;
     
     private Image renderImage;
@@ -15,32 +21,32 @@ public final class Demo5 extends RunnableApplet{ // Applet implements Runnable {
 
         // BUILD SCENE
 
-        scene = new idx3d_Scene(this.size().width, this.size().height);
+        scene = new IScene(this.size().width, this.size().height);
         scene.defaultCamera.setFov(100f);
 
         // Material setup
 
-        scene.addMaterial("Glass", new idx3d_Material(getDocumentBase(), "glass.material"));
-        scene.addMaterial("Chrome", new idx3d_Material(getDocumentBase(), "chrome.material"));
-        scene.addMaterial("Blue", new idx3d_Material(getDocumentBase(), "blue.material"));
-        scene.addMaterial("Orange", new idx3d_Material(0xFF6600));
+        scene.addMaterial("Glass", new IMaterial(getCodeBase(), "glass.material"));
+        scene.addMaterial("Chrome", new IMaterial(getCodeBase(), "chrome.material"));
+        scene.addMaterial("Blue", new IMaterial(getCodeBase(), "blue.material"));
+        scene.addMaterial("Orange", new IMaterial(0xFF6600));
 
-        idx3d_Material flatGreen = new idx3d_Material(0x00FF00);
+        IMaterial flatGreen = new IMaterial(0x00FF00);
         flatGreen.setFlat(true);
         scene.addMaterial("Green", flatGreen);
 
-        scene.addMaterial("Yellow", new idx3d_Material(0xFFCC00));
+        scene.addMaterial("Yellow", new IMaterial(0xFFCC00));
 
         // Light setup
 
-        scene.addLight("Light1", new idx3d_Light(new idx3d_Vector(0.2f, 0.2f, 1f), 0xFFFFFF, 320, 80));
-        scene.addLight("Light2", new idx3d_Light(new idx3d_Vector(-1f, -1f, 1f), 0xFFCC99, 100, 40));
-        scene.addLight("Light3", new idx3d_Light(new idx3d_Vector(0f, -1f, 0.5f), 0x666666, 320, 80));
+        scene.addLight("Light1", new ILight(new IVector(0.2f, 0.2f, 1f), 0xFFFFFF, 320, 80));
+        scene.addLight("Light2", new ILight(new IVector(-1f, -1f, 1f), 0xFFCC99, 100, 40));
+        scene.addLight("Light3", new ILight(new IVector(0f, -1f, 0.5f), 0x666666, 320, 80));
 
         // Object setup
 
         try {
-            new idx3d_3ds_Importer().importFromURL(new java.net.URL(getDocumentBase(), "demo5.3ds"), scene);
+            new I3ds_Importer().importFromURL(new java.net.URL(getCodeBase(), "demo5.3ds"), scene);
         } catch (Exception e) {
             System.out.println(e + "");
         }
@@ -58,11 +64,11 @@ public final class Demo5 extends RunnableApplet{ // Applet implements Runnable {
         scene.object("Cube").setMaterial(scene.material("Green"));
         scene.object("Cone").setMaterial(scene.material("Yellow"));
         scene.object("Sphere").setMaterial(scene.material("Orange"));
-        idx3d_TextureProjector.projectFrontal(scene.object("Blob1"));
+        ITextureProjector.projectFrontal(scene.object("Blob1"));
 
-        idx3d_Texture bkgrd = idx3d_Texture.blendTopDown(
-                idx3d_TextureFactory.CHECKERBOARD(this.size().width, this.size().height, 4, 0x000000, 0x999999),
-                new idx3d_Texture(getDocumentBase(), "idxbkgrd.jpg"));
+        ITexture bkgrd = ITexture.blendTopDown(
+                ITextureFactory.CHECKERBOARD(this.size().width, this.size().height, 4, 0x000000, 0x999999),
+                new ITexture(getCodeBase(), "idxbkgrd.jpg"));
         scene.environment.setBackground(bkgrd);
 
     }
@@ -87,22 +93,23 @@ public final class Demo5 extends RunnableApplet{ // Applet implements Runnable {
     }
 
    private int countSkip = 0; 
-    public void run() {
-        while (true) {
-            if(!useAWTThread){
-                if(!drawMode){
-                    render();
-                }else{
-                    System.err.println("Skip rendering " + ++countSkip);
-                }
-            }
-            repaint();
-            try {
-                Thread.sleep(5);
-            } catch (InterruptedException e) {
-            }
-        }
-    }
+   
+	public void run() {
+		while (true) {
+			if (!useAWTThread) {
+				if (!drawMode) {
+					render();
+				} else {
+					System.err.println("Skip rendering " + ++countSkip);
+				}
+			}
+			repaint();
+			try {
+				Thread.sleep(5);
+			} catch (InterruptedException e) {
+			}
+		}
+	}
 
     /**
      * Render the Scene
@@ -226,7 +233,7 @@ public final class Demo5 extends RunnableApplet{ // Applet implements Runnable {
 
     public static void main(String[] args) {
         Demo5 demo = new Demo5();
-        demo.launch(512,512);
+        demo.launch(1024,1024);
     }
    
 }

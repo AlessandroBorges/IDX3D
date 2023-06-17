@@ -9,7 +9,7 @@ import java.applet.*;
 public final class Demo9 extends Applet implements Runnable
 {
 	private Thread idx_Thread;
-	idx3d_Scene scene;
+	IScene scene;
 
 	int oldx=0;
 	int oldy=0;
@@ -22,18 +22,18 @@ public final class Demo9 extends Applet implements Runnable
 		
 		// BUILD SCENE
 		
-			scene=new idx3d_Scene(this.size().width,this.size().height);
-			scene.addLight("Light1",new idx3d_Light(new idx3d_Vector(-0.2f,-0.2f,1f),0xFFFFFF,320,120));			
-			scene.addLight("Light2",new idx3d_Light(new idx3d_Vector(-1f,-1f,1f),0xFFFFFF,320,80));
-			scene.addLight("Light3",new idx3d_Light(new idx3d_Vector(0.5f,0.5f,1f),0x3366FF,480,160));
+			scene=new IScene(this.size().width,this.size().height);
+			scene.addLight("Light1",new ILight(new IVector(-0.2f,-0.2f,1f),0xFFFFFF,320,120));			
+			scene.addLight("Light2",new ILight(new IVector(-1f,-1f,1f),0xFFFFFF,320,80));
+			scene.addLight("Light3",new ILight(new IVector(0.5f,0.5f,1f),0x3366FF,480,160));
 			
-			scene.addMaterial("Folie",new idx3d_Material(0x0066FF));
+			scene.addMaterial("Folie",new IMaterial(0x0066FF));
 			scene.material("Folie").setTransparency(192);
 			
 			scene.setAmbient(333366);
 			
 			try{
-				new idx3d_3ds_Importer().importFromStream(new java.net.URL(getDocumentBase(),"mech.3ds").openStream(),scene);
+				new I3ds_Importer().importFromStream(new java.net.URL(getDocumentBase(),"mech.3ds").openStream(),scene);
 				scene.rebuild();
 				for (int i=0; i<scene.objects;i++) scene.object[i].setMaterial(scene.material("Folie"));
 				scene.normalize();

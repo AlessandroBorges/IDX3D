@@ -7,7 +7,7 @@ import java.net.*;
 public final class demo10 extends Applet implements Runnable
 {
 	private Thread idx_Thread;
-	idx3d_Scene scene;
+	IScene scene;
 	int oldx=0;
 	int oldy=0;
 	boolean antialias=false;
@@ -34,27 +34,27 @@ public final class demo10 extends Applet implements Runnable
 			
 		// BUILD SCENE
 		
-			scene=new idx3d_Scene(this.size().width,this.size().height-18);
+			scene=new IScene(this.size().width,this.size().height-18);
 			scene.useIdBuffer(true);
 			
-			idx3d_Material metal=new idx3d_Material();
-			metal.setEnvmap(new idx3d_Texture(getImage(getDocumentBase(),"chrome.jpg")));
+			IMaterial metal=new IMaterial();
+			metal.setEnvmap(new ITexture(getImage(getDocumentBase(),"chrome.jpg")));
 			metal.setReflectivity(255);
 			scene.addMaterial("Metal",metal);
 			
-			scene.addMaterial("Flat", new idx3d_Material());
+			scene.addMaterial("Flat", new IMaterial());
 			scene.material("Flat").setFlat(true);
 			
-			scene.addMaterial("Link1", new idx3d_Material(new idx3d_Texture(getImage(getDocumentBase(),"link1.jpg"))));
-			scene.addMaterial("Link2", new idx3d_Material(new idx3d_Texture(getImage(getDocumentBase(),"link2.jpg"))));
-			scene.addMaterial("Link3", new idx3d_Material(new idx3d_Texture(getImage(getDocumentBase(),"link3.jpg"))));
+			scene.addMaterial("Link1", new IMaterial(new ITexture(getImage(getDocumentBase(),"link1.jpg"))));
+			scene.addMaterial("Link2", new IMaterial(new ITexture(getImage(getDocumentBase(),"link2.jpg"))));
+			scene.addMaterial("Link3", new IMaterial(new ITexture(getImage(getDocumentBase(),"link3.jpg"))));
 
 			
-			scene.addLight("Light1",new idx3d_Light(new idx3d_Vector(0.2f,0.2f,1f),0xFFFFFF,200,80));			
-			scene.addLight("Light2",new idx3d_Light(new idx3d_Vector(-1f,-1f,0.4f),0xAAAAAA,100,80));
+			scene.addLight("Light1",new ILight(new IVector(0.2f,0.2f,1f),0xFFFFFF,200,80));			
+			scene.addLight("Light2",new ILight(new IVector(-1f,-1f,0.4f),0xAAAAAA,100,80));
 					
 			try{
-				new idx3d_3ds_Importer().importFromURL(new java.net.URL(getDocumentBase(),"linkable.3ds"),scene);
+				new I3ds_Importer().importFromURL(new java.net.URL(getDocumentBase(),"linkable.3ds"),scene);
 				
 				scene.rebuild();
 				scene.normalize();
@@ -64,7 +64,7 @@ public final class demo10 extends Applet implements Runnable
 					if (scene.object[i].name.startsWith("Box"))
 					{
 						scene.object[i].setMaterial(scene.material("Flat"));
-						scene.object[i].userData=idx3d_Vector.random(0.1f);
+						scene.object[i].userData=IVector.random(0.1f);
 						scene.object[i].detach();
 					}
 
@@ -130,12 +130,12 @@ public final class demo10 extends Applet implements Runnable
 		
 		for (int i=0; i<scene.objects;i++) 
 			if (scene.object[i].name.startsWith("Box"))
-				scene.object[i].rotateSelf((idx3d_Vector)scene.object[i].userData);
+				scene.object[i].rotateSelf((IVector)scene.object[i].userData);
 		
 		g.setColor(Color.darkGray);
 		g.fillRect(0,this.size().height-18,this.size().width,18);
 		
-		idx3d_Object obj=scene.identifyObjectAt(oldx,oldy);
+		IObject obj=scene.identifyObjectAt(oldx,oldy);
 		scene.material("Link1").setTransparency(0);
 		scene.material("Link2").setTransparency(0);
 		scene.material("Link3").setTransparency(0);
@@ -189,7 +189,7 @@ public final class demo10 extends Applet implements Runnable
 	public boolean mouseDown(Event evt,int x,int y)
 	{
 		autorotation=false;
-		idx3d_Object obj=scene.identifyObjectAt(oldx,oldy);
+		IObject obj=scene.identifyObjectAt(oldx,oldy);
 		if (obj!=null)
 		{
 			if (obj.name.equals("Link1")) getAppletContext().showDocument(link1,"_blank");

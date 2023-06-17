@@ -5,16 +5,16 @@ import java.applet.*;
 
 public final class TextureLab extends Dialog
 {
-	idx3d_Screen textureView;
-	idx3d_Scene objectView;
+	IScreen textureView;
+	IScene objectView;
 	Image doubleBuffer=null;
 	boolean initialized=false;
 	boolean viewObject=false;
 	int oldx=0;
 	int oldy=0;
-	idx3d_TextureSettings settings=null;
+	ITextureSettings settings=null;
 	
-	idx3d_Texture texture;
+	ITexture texture;
 		
 	Button 		random,param,randomColor,returnTexture;
 	Label		label1,label2,label3,label4,label5,label6,label7;
@@ -30,7 +30,7 @@ public final class TextureLab extends Dialog
 	
 	boolean textureId=true;  //true=Texture, false=Envmap
 	
-	public TextureLab(idx3dMaterialLab parent,idx3d_TextureSettings settings, boolean id)
+	public TextureLab(idx3dMaterialLab parent,ITextureSettings settings, boolean id)
 	{
 		super(parent,"Texture Lab",true);
 		this.parent=parent;
@@ -43,20 +43,20 @@ public final class TextureLab extends Dialog
 		setBackground(Color.lightGray);
 		normal=new Font("Helvetica",0,11);
 				
-		textureView=new idx3d_Screen(256,256);
-		objectView=new idx3d_Scene(256,256);
+		textureView=new IScreen(256,256);
+		objectView=new IScene(256,256);
 		
 		objectView.setAmbient(0x333333);
-		objectView.addLight("Light1",new idx3d_Light(new idx3d_Vector(0.2f,0.2f,1f),0xFFFFFF,320,120));			
-		objectView.addLight("Light2",new idx3d_Light(new idx3d_Vector(-1f,-1f,1f),0xFFFFFF,160,200));
+		objectView.addLight("Light1",new ILight(new IVector(0.2f,0.2f,1f),0xFFFFFF,320,120));			
+		objectView.addLight("Light2",new ILight(new IVector(-1f,-1f,1f),0xFFFFFF,160,200));
 		
-		idx3d_Object trefoil=idx3d_ObjectFactory.TORUSKNOT(2f,3f,0.4f,1.2f,0.48f,1.2f,120,8);
+		IObject trefoil=IObjectFactory.TORUSKNOT(2f,3f,0.4f,1.2f,0.48f,1.2f,120,8);
 		objectView.addObject("Trefoil",trefoil);
 		objectView.object("Trefoil").rotate(0.2f,3.5f,-0.5f);
-		objectView.object("Trefoil").setMaterial(new idx3d_Material(texture));
+		objectView.object("Trefoil").setMaterial(new IMaterial(texture));
 		objectView.object("Trefoil").scale(0.4f);
 		objectView.object("Trefoil").removeDuplicateVertices();
-		idx3d_TextureProjector.projectTop(objectView.object("Trefoil"));
+		ITextureProjector.projectTop(objectView.object("Trefoil"));
 		
 		initGUI();
 		show();
@@ -71,7 +71,7 @@ public final class TextureLab extends Dialog
 	{
 		if (initialized) return;
 		initialized=true;
-		texture=new idx3d_Texture(256,256);
+		texture=new ITexture(256,256);
 
 		random=new Button("Create new random texture");
 		param=new Button("Create texture from parameters");
@@ -276,7 +276,7 @@ public final class TextureLab extends Dialog
 		return true;
 	}
 	
-	private void applySettings(idx3d_TextureSettings settings)
+	private void applySettings(ITextureSettings settings)
 	{
 		if (settings==null) { random(); return; }
 		persistency.setValue((int)(100*settings.persistency));
@@ -296,10 +296,10 @@ public final class TextureLab extends Dialog
 		
 	private void random()
 	{
-		persistency.setValue((int)(100*idx3d_Math.random(0.2f,0.9f)));
-		density.setValue((int)(100*idx3d_Math.random(0.5f,5f)));
-		samples.setValue((int)(idx3d_Math.random(1,8)));
-		numColors.setValue((int)(idx3d_Math.random(2,6)));
+		persistency.setValue((int)(100*IMath.random(0.2f,0.9f)));
+		density.setValue((int)(100*IMath.random(0.5f,5f)));
+		samples.setValue((int)(IMath.random(1,8)));
+		numColors.setValue((int)(IMath.random(2,6)));
 		width.setText("256");
 		height.setText("256");
 		
@@ -316,7 +316,7 @@ public final class TextureLab extends Dialog
 	private void randomColor()
 	{
 		for (int i=0;i<numColors.getValue();i++)
-			color[i].setText(Integer.toHexString(idx3d_Color.random()).toUpperCase());
+			color[i].setText(Integer.toHexString(IColor.random()).toUpperCase());
 
 		generateTexture();
 	}
@@ -348,23 +348,23 @@ public final class TextureLab extends Dialog
 		if (perlin.getState())
 		{
 			modeId=1;
-			texture=idx3d_TextureFactory.PERLIN(w,h, p, d, s, 1024).colorize(
-				idx3d_Color.makeGradient(colors,1024));
+			texture=ITextureFactory.PERLIN(w,h, p, d, s, 1024).colorize(
+				IColor.makeGradient(colors,1024));
 		}
 		if (wave.getState())
 		{
 			modeId=2;
-			texture=idx3d_TextureFactory.WAVE(w,h, p, d, s, 1024).colorize(
-				idx3d_Color.makeGradient(colors,1024));
+			texture=ITextureFactory.WAVE(w,h, p, d, s, 1024).colorize(
+				IColor.makeGradient(colors,1024));
 		}
 		if (grain.getState())
 		{
 			modeId=3;
-			texture=idx3d_TextureFactory.GRAIN(w,h, p, d, s,8,1024).colorize(
-				idx3d_Color.makeGradient(colors,1024));
+			texture=ITextureFactory.GRAIN(w,h, p, d, s,8,1024).colorize(
+				IColor.makeGradient(colors,1024));
 		}
 		
-		settings=new idx3d_TextureSettings(texture,w,h,modeId,p,d,s,colors);
+		settings=new ITextureSettings(texture,w,h,modeId,p,d,s,colors);
 		
 		repaint();
 	}

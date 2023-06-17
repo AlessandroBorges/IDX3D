@@ -5,9 +5,9 @@ import java.applet.*;
 
 public final class LensFlareEditor extends Applet
 {
-	idx3d_Scene scene;
-	idx3d_FXLensFlare lensFlare;
-	idx3d_FXLensFlare backup;
+	IScene scene;
+	IFXLensFlare lensFlare;
+	IFXLensFlare backup;
 	Image doubleBuffer=null;
 	boolean initialized=false;
 	
@@ -23,9 +23,9 @@ public final class LensFlareEditor extends Applet
 	
 	public void init()
 	{
-		scene=new idx3d_Scene(this.size().width,this.size().height-120);
-		lensFlare=new idx3d_FXLensFlare("LensFlare", scene,false);
-		lensFlare.setPos(new idx3d_Vector(0.5f,-0.5f,0.5f));
+		scene=new IScene(this.size().width,this.size().height-120);
+		lensFlare=new IFXLensFlare("LensFlare", scene,false);
+		lensFlare.setPos(new IVector(0.5f,-0.5f,0.5f));
 		lensFlare.preset2();
 	}
 
