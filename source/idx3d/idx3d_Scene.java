@@ -37,7 +37,11 @@
 package idx3d;
 
 import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.awt.Image;
 
 public final class idx3d_Scene extends idx3d_CoreObject
@@ -71,7 +75,7 @@ public final class idx3d_Scene extends idx3d_CoreObject
 		
 	// D A T A   S T R U C T U R E S
 		
-		public Hashtable objectData=new Hashtable();
+		public Map<String, idx3d_Object> objectData=new HashMap<String, idx3d_Object>();
 		public Hashtable lightData=new Hashtable();
 		public Hashtable materialData=new Hashtable();
 		public Hashtable cameraData=new Hashtable();
@@ -108,7 +112,8 @@ public final class idx3d_Scene extends idx3d_CoreObject
 	
 		public void removeAllObjects()
 		{
-			objectData=new Hashtable();
+		        objectData.clear();
+		        //objectData=new Hashtable();
 			objectsNeedRebuild=true;
 			rebuild();
 		}
@@ -120,10 +125,11 @@ public final class idx3d_Scene extends idx3d_CoreObject
 				objectsNeedRebuild=false;
 				objects=objectData.size();
 				object=new idx3d_Object[objects];
-				Enumeration enum=objectData.elements();
+				//Enumeration en=objectData.elements();
+				Iterator<idx3d_Object> en = objectData.values().iterator(); 
 				for (int i=objects-1;i>=0;i--)
 				{
-					object[i]=(idx3d_Object)enum.nextElement();
+					object[i]=(idx3d_Object)en.next();
 					object[i].id=i;
 					object[i].rebuild();
 				}
@@ -135,8 +141,8 @@ public final class idx3d_Scene extends idx3d_CoreObject
 				lightsNeedRebuild=false;
 				lights=lightData.size();
 				light=new idx3d_Light[lights];				
-				Enumeration enum=lightData.elements();
-				for (int i=lights-1;i>=0;i--) light[i]=(idx3d_Light)enum.nextElement();
+				Enumeration en=lightData.elements();
+				for (int i=lights-1;i>=0;i--) light[i]=(idx3d_Light)en.nextElement();
 
 			}
 		}
@@ -184,41 +190,35 @@ public final class idx3d_Scene extends idx3d_CoreObject
 		}
 				
 	
-		public final void render(idx3d_Camera cam)
-		{
-			renderPipeline.render(cam);
-		}
-		
-		public final void render()
-		{
-			renderPipeline.render(this.defaultCamera);
-		}
-		
-		public final Image getImage()
-		{
-			return renderPipeline.screen.getImage();
-		}
-		
-		public final void setAntialias(boolean antialias)
-		{
-			renderPipeline.setAntialias(antialias);
-		}
-		
-		public final boolean antialias()
-		{
-			return renderPipeline.screen.antialias;
-		}
-		
-		public float getFPS()
-		{
-			return renderPipeline.getFPS();
-		}
-		
-		public void useIdBuffer(boolean useIdBuffer)
-		// Enables / Disables idBuffering
-		{
-			renderPipeline.useIdBuffer(useIdBuffer);
-		}
+    public final void render(idx3d_Camera cam) {
+        renderPipeline.render(cam);
+    }
+
+    public final void render() {
+        renderPipeline.render(this.defaultCamera);
+    }
+
+    public final Image getImage() {
+        return renderPipeline.screen.getImage();
+    }
+
+    public final void setAntialias(boolean antialias) {
+        renderPipeline.setAntialias(antialias);
+    }
+
+    public final boolean antialias() {
+        return renderPipeline.screen.antialias;
+    }
+
+    public float getFPS() {
+        return renderPipeline.getFPS();
+    }
+
+    public void useIdBuffer(boolean useIdBuffer)
+    // Enables / Disables idBuffering
+    {
+        renderPipeline.useIdBuffer(useIdBuffer);
+    }
 		
 		public idx3d_Triangle identifyTriangleAt(int xpos, int ypos)
 		{

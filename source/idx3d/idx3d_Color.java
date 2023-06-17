@@ -56,31 +56,31 @@ public final class idx3d_Color
 
 	// PUBLIC STATIC METHODS
 	
-		public static int getRed(int c)
+		public final static int getRed(int c)
 		// Returns the red channel of the given color
 		{
 			return (c&RED)>>16;
 		}
 	
-		public static int getGreen(int c)
+		public final static int getGreen(int c)
 		// Returns the green channel of the given color
 		{
 			return (c&GREEN)>>8;
 		}
 	
-		public static int getBlue(int c)
+		public final static int getBlue(int c)
 		// Returns the blue channel of the given color
 		{
 			return c&BLUE;
 		}
 	
-		public static int getColor(int r, int g, int b)
+		public final static int getColor(int r, int g, int b)
 		// Returns the color given by r,g,b as a packed 24bit-color
 		{
 			return ALPHA|(r<<16)|(g<<8)|b;
 		}
 		
-		public static int getGray(int color)
+		public final static int getGray(int color)
 		// Converts the color to gray
 		{
 			int r=((color&RED)>>16);
@@ -90,27 +90,27 @@ public final class idx3d_Color
 			return ALPHA|(Y<<16)|(Y<<8)|Y;
 		}
 		
-		public static int getAverage(int color)
+		public final static int getAverage(int color)
 		// Returns the average of the color channels
 		{
 			return (((color&RED)>>16)+((color&GREEN)>>8)+(color&BLUE))/3;
 		}
 	
-		public static int getCropColor(int r, int g, int b)
+		public final static int getCropColor(int r, int g, int b)
 		{
 			return ALPHA|(idx3d_Math.crop(r,0,255)<<16)|(idx3d_Math.crop(g,0,255)<<8)|idx3d_Math.crop(b,0,255);
 		}
 	
-		public static int add(int color1, int color2)
+		public final static int add(int color1, int color2)
 		// Adds color1 and color2
 		{
-			pixel=(color1&MASK7Bit)+(color2&MASK7Bit);
-			overflow=pixel&0x1010100;
+			int pixel=(color1&MASK7Bit)+(color2&MASK7Bit);
+			int overflow=pixel&0x1010100;
 			overflow=overflow-(overflow>>8);
-			return ALPHA|overflow|pixel;
+			return ALPHA|overflow|pixel;			
 		}
 	
-		public static int sub(int color1, int color2)
+		public final static int sub(int color1, int color2)
 		// Substracts color2 from color1
 		{
 			pixel=(color1&MASK7Bit)+(~color2&MASK7Bit);
@@ -119,7 +119,7 @@ public final class idx3d_Color
 			return ALPHA|(~overflow&pixel);
 		}
 	
-		public static int subneg(int color1, int color2)
+		public final static int subneg(int color1, int color2)
 		// Substracts the negative of color2 from color1
 		{
 			pixel=(color1&MASK7Bit)+(color2&MASK7Bit);
@@ -128,31 +128,32 @@ public final class idx3d_Color
 			return ALPHA|(~overflow&pixel);
 		}
 	
-		public static int inv(int color)
+		public final static int inv(int color)
 		// returns the inverse of the given color
 		{
 			return ALPHA|(~color);
 		}
 		
-		public static int mix(int color1, int color2)
+		public final static int mix(int color1, int color2)
 		// Returns the averidge color from 2 colors
 		{
 			return ALPHA|(((color1&MASK7Bit)>>1)+((color2&MASK7Bit)>>1));
 		}
 		
-		public static int scale(int color, int factor)
+		public final static int scale(int color, int factor)
 		{
 			if (factor==0) return 0;
 			if (factor==255) return color;
 			if (factor==127) return (color&0xFEFEFE)>>1;
 			
-			r=(((color>>16)&255)*factor)>>8;
-			g=(((color>>8)&255)*factor)>>8;
-			b=((color&255)*factor)>>8;
+			  r=(((color>>16)&255)*factor)>>8;
+			  g=(((color>>8)&255)*factor)>>8;
+			  b=((color&255)*factor)>>8;
+      
 			return ALPHA|(r<<16)|(g<<8)|b;
 		}
 		
-		public static int multiply(int color1, int color2)
+		public final static int multiply(int color1, int color2)
 		{
 			if ((color1&RGB)==0) return 0;
 			if ((color2&RGB)==0) return 0;
@@ -162,7 +163,7 @@ public final class idx3d_Color
 			return ALPHA|(r<<16)|(g<<8)|b;
 		}
 		
-		public static int transparency(int bkgrd, int color, int alpha)
+		public final static int transparency(int bkgrd, int color, int alpha)
 		// alpha=0 : opaque , alpha=255: full transparent
 		{
 			if (alpha==0) return color;
@@ -177,7 +178,7 @@ public final class idx3d_Color
 			
 		}
 		
-		public static int random(int color, int delta)
+		public final static int random(int color, int delta)
 		{
 			int r=(color>>16)&255;
 			int g=(color>>8)&255;
@@ -188,12 +189,12 @@ public final class idx3d_Color
 			return getCropColor(r,g,b);
 		}
 		
-		public static final int random()
+		public  static final int random()
 		{
 			return (int)(Math.random()*16777216);
 		}
 			
-		public static int[] makeGradient(int colors[], int size)
+		public final static int[] makeGradient(int colors[], int size)
 		{
 			int[] pal=new int[size];
 			int c1,c2,pos1,pos2,range;

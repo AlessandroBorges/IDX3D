@@ -36,6 +36,9 @@
 
 package idx3d;
 
+import static idx3d.idx3d_Color.ALPHA;
+import static idx3d.idx3d_Color.MASK7Bit;
+
 public final class idx3d_Rasterizer
 // Rasterizer stage of the render pipeline
 {
@@ -62,12 +65,12 @@ public final class idx3d_Rasterizer
 	// Rasterizer hints
 	
 		private int mode=0;
-		private int F=0;   	// FLAT
-		private int W=1;	// WIREFRAME
-		private int P=2;  	// PHONG
-		private int E=4;  	// ENVMAP
-		private int T=8; 	// TEXTURED
-		private int SHADED=P|E|T;
+		private static final int F=0;   	// FLAT
+		private static final int W=1;	// WIREFRAME
+		private static final int P=2;  	// PHONG
+		private static final int E=4;  	// ENVMAP
+		private static final int T=8; 	// TEXTURED
+		private static final int SHADED=P|E|T;
 		
 	//  R E G I S T E R S
 
@@ -346,14 +349,26 @@ public final class idx3d_Rasterizer
 			}
 			xR=(xR<width)?xR:width;
 			
-			if (mode==F) renderLineF();
-			else if ((mode&SHADED)==P) renderLineP();
-			else if ((mode&SHADED)==E) renderLineE();
-			else if ((mode&SHADED)==T) renderLineT();
-			else if ((mode&SHADED)==(P|E)) renderLinePE();
-			else if ((mode&SHADED)==(P|T)) renderLinePT();
-			else if ((mode&SHADED)==(P|E|T)) renderLinePET();
+//			if (mode==F) renderLineF();                        
+//			else if ((mode&SHADED)==P) renderLineP();
+//			else if ((mode&SHADED)==E) renderLineE();
+//			else if ((mode&SHADED)==T) renderLineT();
+//			else if ((mode&SHADED)==(P|E)) renderLinePE();
+//			else if ((mode&SHADED)==(P|T)) renderLinePT();
+//			else if ((mode&SHADED)==(P|E|T)) renderLinePET();
 			
+                        int modeShade = mode&SHADED;
+                        switch(modeShade){
+                            case F:renderLineF();break;
+                            case P: renderLineP();break;
+                            case E: renderLineE();break;
+                            case T: renderLineT();break;
+                            case (P|E): renderLinePE();break;    
+                            case (P|T): renderLinePT();break; 
+                            case (P|E|T):renderLinePET();break;    
+                            default: break;
+                        }
+                        
 			offset+=width;
 			xBase+=dxL;
 			xMax+=dxR;
@@ -387,7 +402,7 @@ public final class idx3d_Rasterizer
 		
 		private void renderLineP()
 		{
-			for (x=xL;x<xR;x++)
+			for (int x=xL;x<xR;x++)
 			{
 				pos=x+offset;
 				if (z<zBuffer[pos])
@@ -511,7 +526,7 @@ public final class idx3d_Rasterizer
 		}
 		
 		private void renderLinePET()
-		{			
+		{		
 			for (x=xL;x<xR;x++)
 			{
 				pos=x+offset;
@@ -630,6 +645,17 @@ public final class idx3d_Rasterizer
 				}
 			}
 		}
+                
+                
+                private final static int add(int color1, int color2)
+		// Adds color1 and color2
+		{
+			int pixel=(color1&MASK7Bit)+(color2&MASK7Bit);
+			int overflow=pixel&0x1010100;
+			overflow=overflow-(overflow>>8);
+			return ALPHA|overflow|pixel;			
+		}
+                
 		
 }
 	

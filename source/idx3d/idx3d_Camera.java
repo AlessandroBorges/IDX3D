@@ -11,17 +11,17 @@
 // | contact me with an e-mail [proxima@active.ch].
 // |
 // | Thanx & greetinx go to:
-// | * Wilfred L. Guerin, 	for testing, bug report, and tons 
+// | * Wilfred L. Guerin, 	for testing, bug report, and tons
 // |			of brilliant suggestions
 // | * Sandy McArthur,	for reverse loops
 // | * Dr. Douglas Lyons,	for mentioning idx3d1 in his book
 // | * Hugo Elias,		for maintaining his great page
-// | * the comp.graphics.algorithms people, 
+// | * the comp.graphics.algorithms people,
 // | 			for scientific concerns
 // | * Tobias Hill,		for inspiration and awakening my
 // |			interest in java gfx coding
 // | * Kai Krause,		for inspiration and hope
-// | * Incarom & Parisienne,	for keeping me awake during the 
+// | * Incarom & Parisienne,	for keeping me awake during the
 // |			long coding nights
 // | * Doris Langhard,	for being the sweetest girl on earth
 // | * Etnica, Infinity Project, X-Dream and "Space Night"@BR3
@@ -42,19 +42,19 @@ public class idx3d_Camera
 
 		public idx3d_Matrix matrix=new idx3d_Matrix();
 		public idx3d_Matrix normalmatrix=new idx3d_Matrix();
-	
+
 		boolean needsRebuild=true;   // Flag indicating changes on matrix
 
 		// Camera settings
 		public idx3d_Vector pos=new idx3d_Vector(0f,0f,0f);
 		public idx3d_Vector lookat=new idx3d_Vector(0f,0f,0f);
 		public float roll=0f;
-		
+
 		float fovfact;             // Field of View factor
 		int screenwidth;
 		int screenheight;
 		int screenscale;
-		
+
 	// C O N S T R U C T O R S
 
 		public idx3d_Camera()
@@ -68,49 +68,56 @@ public class idx3d_Camera
 		}
 
 	// P U B L I C   M E T H O D S
-	
+
 		idx3d_Matrix getMatrix()
 		{
 			rebuildMatrices();
 			return matrix;
 		}
-		
+
 		idx3d_Matrix getNormalMatrix()
 		{
 			rebuildMatrices();
 			return normalmatrix;
 		}
-		
+
 		void rebuildMatrices()
 		{
 			if (!needsRebuild) return;
 			needsRebuild=false;
-		
+
 			idx3d_Vector forward,up,right;
-			
+
 			forward=idx3d_Vector.sub(lookat,pos);
 			up=new idx3d_Vector(0f,1f,0f);
 			right=idx3d_Vector.getNormal(up,forward);
 			up=idx3d_Vector.getNormal(forward,right);
-			
+
 			forward.normalize();
 			up.normalize();
 			right.normalize();
-			
+
 			normalmatrix=new idx3d_Matrix(right,up,forward);
 			normalmatrix.rotate(0,0,roll);
-			matrix=normalmatrix.getClone();
+			//matrix=normalmatrix.getClone();
+    if (matrix == null)
+    {
+      matrix = new  idx3d_Matrix();
+    }
+      normalmatrix.copyTo(matrix);
 			matrix.shift(pos.x,pos.y,pos.z);
-			
-			normalmatrix=normalmatrix.inverse();
-			matrix=matrix.inverse();
+
+		//	normalmatrix=normalmatrix.inverse();
+      normalmatrix.inverse(normalmatrix);
+			//matrix=matrix.inverse();
+      matrix.inverse(matrix);
 		}
-		
+
 		public void setFov(float fov)
 		{
 			fovfact=(float)Math.tan(idx3d_Math.deg2rad(fov)/2);
 		}
-		
+
 		public void roll(float angle)
 		{
 			roll+=angle;
@@ -128,7 +135,7 @@ public class idx3d_Camera
 			pos=p;
 			needsRebuild=true;
 		}
-	
+
 		public void lookAt(float px, float py, float pz)
 		{
 			lookat=new idx3d_Vector(px,py,pz);
@@ -147,61 +154,65 @@ public class idx3d_Camera
 			screenheight=h;
 			screenscale=(w<h)?w:h;
 		}
-		
+
 	// MATRIX MODIFIERS
-	
+
 		public final void shift(float dx, float dy, float dz)
 		{
-			pos=pos.transform(idx3d_Matrix.shiftMatrix(dx,dy,dz));
-			lookat=lookat.transform(idx3d_Matrix.shiftMatrix(dx,dy,dz));
+			//pos = pos.transform(idx3d_Matrix.shiftMatrix(dx,dy,dz));
+			pos.transform(idx3d_Matrix.shiftMatrix(dx,dy,dz),pos);
+
+			//lookat=lookat.transform(idx3d_Matrix.shiftMatrix(dx,dy,dz));
+			lookat.transform(idx3d_Matrix.shiftMatrix(dx,dy,dz),lookat);
 			needsRebuild=true;
-			
+
 		}
-		
+
 		public final void shift(idx3d_Vector v)
 		{
 			shift(v.x,v.y,v.z);
 
 		}
-	
+
 		public final void rotate(float dx, float dy, float dz)
 		{
-			pos=pos.transform(idx3d_Matrix.rotateMatrix(dx,dy,dz));
+			//pos=pos.transform(idx3d_Matrix.rotateMatrix(dx,dy,dz));
+			pos.transform(idx3d_Matrix.rotateMatrix(dx,dy,dz),pos);
 			needsRebuild=true;
 		}
-		
+
 		public final void rotate(idx3d_Vector v)
 		{
 			rotate(v.x,v.y,v.z);
 		}
-		
+
 		public static idx3d_Camera FRONT()
 		{
 			idx3d_Camera cam=new idx3d_Camera();
 			cam.setPos(0,0,-2f);
 			return cam;
 		}
-		
+
 		public static idx3d_Camera LEFT()
 		{
 			idx3d_Camera cam=new idx3d_Camera();
 			cam.setPos(2f,0,0);
 			return cam;
 		}
-		
+
 		public static idx3d_Camera RIGHT()
 		{
 			idx3d_Camera cam=new idx3d_Camera();
 			cam.setPos(-2f,0,0);
 			return cam;
 		}
-		
+
 		public static idx3d_Camera TOP()
 		{
 			idx3d_Camera cam=new idx3d_Camera();
 			cam.setPos(0,-2f,0);
 			return cam;
 		}
-		
-			
+
+
 }
